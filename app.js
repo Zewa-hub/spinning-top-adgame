@@ -35,10 +35,13 @@ var elapsed = 0.0
 var timer   = 0
 var timerHp = 0
 var go      = false
+var isContact = null
 var mechantTimer = 0
+var countContact = 50
 
 var mechantSpeed = 10
 var boutonOn     = false
+var vitesseChoc = 5
 
 app.stage.addChild(background)
 app.stage.addChild(sprite)
@@ -91,6 +94,18 @@ app.ticker.add((delta) => {
     if (elapsed > timer && speed >= 1) {
         go = true
         deplacementGentil()
+        if (isContact) {
+            if (countContact !== 0) {
+                mechant.x += 1
+                sprite.x  -= 1
+                countContact -= 1
+            }
+            else
+            {
+                isContact = false
+                countContact = 50
+            }
+        }
     }
     counter()
     if (mechant.transform != null) {
@@ -99,35 +114,44 @@ app.ticker.add((delta) => {
             deplacementMechant()
         }
     }
+
     sprite.angle += speed
 })
 
-function deplacementGentil()
+function isTouched()
 {
     let margin = sprite.width * 0.50
-    if(mechant.x > sprite.x + ((sprite.width + margin) /2) || (mechant.x + mechant.width/2) < sprite.x || mechant.y > sprite.y + ((sprite.height + margin) /2) || (mechant.y + mechant.height/2) < sprite.y ) {
+    if ((mechant.x > sprite.x + ((sprite.width + margin) /2)
+            || (mechant.x + mechant.width/2) < sprite.x
+            || mechant.y > sprite.y + ((sprite.height + margin) /2)
+            || (mechant.y + mechant.height/2) < sprite.y )
+        && !isContact) {
+        return true
+    }
+    else
+        return false
+}
+function deplacementGentil()
+{
+
+    if(isTouched())
+    {
+        isContact = false
         if (mechant.x > sprite.x) {
-            sprite.x += 0.95
+            sprite.x += vitesseChoc
         }
         if (mechant.y > sprite.y) {
-            sprite.y += 0.95
+            sprite.y += vitesseChoc
         }
         if (mechant.y < sprite.y) {
-            sprite.y -= 0.95
+            sprite.y -= vitesseChoc
         }
         if (mechant.x < sprite.x) {
-            sprite.x -= 0.95
+            sprite.x -= vitesseChoc
         }
     }
     else
-    {
-        for (let i = 0 ; i < 10; i++)
-        {
-            mechant.x += 10
-            sprite.x -= 10
-        }
-
-    }
+        isContact = true
 }
 function counter()
 {
@@ -146,20 +170,19 @@ function counter()
 }
 function deplacementMechant()
 {
-    let margin = sprite.width * 0.50
-
-    if(mechant.x > sprite.x + ((sprite.width + margin) /2) || (mechant.x + mechant.width/2) < sprite.x || mechant.y > sprite.y + ((sprite.height + margin) /2) || (mechant.y + mechant.height/2) < sprite.y ) {
+    if (isTouched())
+    {
         if (mechant.x > sprite.x) {
-            mechant.x -=  0.95
+            mechant.x -=  vitesseChoc
         }
         if (mechant.y > sprite.y) {
-            mechant.y -= 0.95
+            mechant.y -= vitesseChoc
         }
         if (mechant.y < sprite.y) {
-            mechant.y += 0.95
+            mechant.y += vitesseChoc
         }
         if (mechant.x < sprite.x) {
-            mechant.x += 0.95
+            mechant.x += vitesseChoc
         }
     }
     else {
@@ -172,6 +195,7 @@ function deplacementMechant()
             app.stage.addChild(basicText)
             boutonOn = true
         }
+        isContact = true
         speed -= descCoef
         console.log(speed)
     }
@@ -203,22 +227,21 @@ function onClick()
             stupidCount = Math.round(countHp * 14.21)
             stupidSize  = 10
         } else if (countHp <= 8) {
-            stupidCount = Math.round(countHp * 88978.74)
+            stupidCount = Math.round(countHp * 8897.74)
             stupidSize  = 14
         } else if (countHp <= 15) {
-            stupidCount = Math.round(countHp * 1457123.68)
+            stupidCount = Math.round(countHp * 145713.68)
             stupidSize  = 16
         } else if (countHp <= 20) {
-            stupidCount = Math.round(countHp * 21544778.56)
+            stupidCount = Math.round(countHp * 2154478.56)
             stupidSize = 20
         }
 
         var styleNumber = new PIXI.TextStyle({
-            fontFamily: 'Arial',
+            fontFamily: 'Bungee',
             fontSize: stupidSize,
-            fontStyle: 'italic',
             fontWeight: 'bold',
-            fill: ['#ffffff', '#000000'], // gradient
+            fill: ['#ffffff', '#000000'],
             stroke: '#4a1850',
             strokeThickness: 5,
             dropShadow: true,
@@ -241,4 +264,5 @@ function onClick()
         app.stage.addChild(stupidCountText)
         descCoef = speed * 0.004
     }
+
 }
