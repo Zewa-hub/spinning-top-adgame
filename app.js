@@ -2,7 +2,8 @@ var height = 360
 var width = 640
 
 var order = [false,false,false,false]
-var app = new PIXI.Application({ width: 640, height: 360 })
+//var app = new PIXI.Application({height: height, width: width})
+var app = new PIXI.Application({resizeTo : window})
 document.body.appendChild(app.view)
 
 var styleNumber = new PIXI.TextStyle({
@@ -14,6 +15,7 @@ var styleNumber = new PIXI.TextStyle({
         1
     ],
     "fontFamily": "Impact",
+    "fontSize":48,
     "strokeThickness": 0.5
 })
 
@@ -33,7 +35,6 @@ var stupidCountText = new PIXI.Text('', styleNumber)
 
 var basicText  = new PIXI.Text('3!!', styleNumber)
 var startText  = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
-
 
 var speed       = 0
 var countHp     = 0
@@ -67,55 +68,55 @@ app.stage.addChild(progressBar)
 
 let progressBar2 = new PIXI.Graphics()
 progressBar2.beginFill(0x20fc03)
-progressBar2.drawRect(width - countMechantTotal - 10, 10, countMechantTotal, 20)
+progressBar2.drawRect(app.view.width - countMechantTotal - 10, 10, countMechantTotal, 20)
 progressBar2.zIndex = 20
 app.stage.addChild(progressBar2)
 
-
 stupidCountText.anchor.set(0.5)
-stupidCountText.x = 320
-stupidCountText.y = 10
+stupidCountText.x = app.view.width / 2
+stupidCountText.y = app.view.height * 0.05
 
 basicText.anchor.set(0.5)
-basicText.x = 320
-basicText.y = 300
+basicText.x = app.view.width /2
+basicText.y = app.view.height *0.9
 basicText.zIndex = 4
 
 startText.anchor.set(0.5)
-startText.x = 320
-startText.y = 10
+startText.x = app.view.width / 2
+startText.y = app.view.height * 0.1
 
 background.zIndex = 0
-background.height = 360
-background.width  = 640
+background.height = app.view.height
+background.width  = app.view.width
 
 sprite.zIndex      = 1
 sprite.anchor.x    = 0.5
 sprite.anchor.y    = 0.5
-sprite.x           = 320
-sprite.y           = 180
-sprite.width       = 150
-sprite.height      = 150
-sprite.y           = 150
+sprite.width       = app.view.width *0.25
+sprite.height      = app.view.width *0.25
+sprite.x           = app.view.width /2
+sprite.y           = app.view.height / 2 + (sprite.height/2)
+
 sprite.interactive = true
 sprite.buttonMode  = true
 sprite.on('pointerdown', onClick)
 
-mechant.x        = 650
-mechant.y        = 0
-mechant.width    = 150
-mechant.height   = 150
+mechant.width    = app.view.width * 0.1
+mechant.height   = app.view.width *0.1
+mechant.x        = app.view.width /2
+mechant.y        = -mechant.width/2
 mechant.anchor.x = 0.5
 mechant.anchor.y = 0.5
 
-bouton.x           = 540
-bouton.y           = 275
+bouton.x           = app.view.width * 0.8
+bouton.y           = app.view.height * 0.8
 bouton.width       = 50
 bouton.height      = 50
 bouton.interactive = true
 bouton.buttonMode  = true
 bouton.on('pointerdown', onHold)
 
+setInterval(reduceSize,0.1)
 app.ticker.add((delta) => {
     elapsed += delta;
     if (elapsed > timer && speed >= 1) {
@@ -140,7 +141,7 @@ app.ticker.add((delta) => {
                         progressBar.beginFill(0xfc0303)
                         progressBar.drawRect(0, 10, countGentilVie, 20)
                         progressBar2.beginFill(0xfc0303)
-                        progressBar2.drawRect(width - countMechant - 10, 10, countMechant, 20)
+                        progressBar2.drawRect(app.view.width - countMechant - 10, 10, countMechant, 20)
 
                     }
                 }
@@ -195,16 +196,25 @@ function deplacementGentil()
 function counter()
 {
     if (elapsed >= timer - 300 && elapsed < timer - 200 && timer !== 0) {
-        basicText.text = '2 !!!'
+        basicText.text = '2'
     }
     if (elapsed >= timer - 200 && elapsed < timer - 100 && timer !== 0) {
-        basicText.text = '1 !!!'
+        basicText.text = '1'
     }
     if (elapsed >= timer - 100 && elapsed < timer && timer !== 0) {
         basicText.text = 'GO !!!'
+        sprite.interactive = false
+        sprite.buttonMode  = false
     }
     if (elapsed >= mechantTimer && mechantTimer !== 0 && mechant.transform != null) {
         //mechant.destroy()
+    }
+}
+function reduceSize()
+{
+    if (elapsed >= timer - 100 && elapsed < timer && timer !== 0 && app.view.width *0.1) {
+        sprite.width -= 2
+        sprite.height -= 2
     }
 }
 function deplacementMechant()
@@ -312,8 +322,6 @@ function ultimate()
     loick.zIndex = 150
     app.stage.addChild(loick)
     */
-
-
 }
 
 function onHit(e,number)
@@ -375,7 +383,7 @@ function onClick()
             stupidCount = Math.round(countHp * 1457.68)
             stupidSize  = 30
         } else if (countHp <= 20) {
-            stupidCount = Math.round(countHp * 21544.56)
+            stupidCount = Math.round(countHp * 8154.56)
             stupidSize = 50
         }
         stupidCountText.text = ""
