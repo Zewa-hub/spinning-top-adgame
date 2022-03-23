@@ -19,36 +19,41 @@ var styleNumber = new PIXI.TextStyle({
     "strokeThickness": 0.5
 })
 
-var bonkObj    = new Audio('./image/bonk.mp3')
-var songObj    = new Audio('./image/song2.mp4')
-var sprite     = PIXI.Sprite.from('./image/toupie_gentil.png')
-var mechant    = PIXI.Sprite.from("./image/toupie_mechante.png")
-let background = PIXI.Sprite.from('./image/arena.jpg')
-let bouton     = PIXI.Sprite.from('./image/button.png')
-var countGentilVieTotal = 200
-var countGentilVie = 0
+var bonkObj     = new Audio('./image/bonk.mp3')
+var songObj     = new Audio('./image/song2.mp4')
+var teteGentil  = PIXI.Sprite.from('./image/tete_de_loick.png')
+var teteMechant = PIXI.Sprite.from('./image/tete_de_mechant.png')
+var sprite      = PIXI.Sprite.from('./image/toupie_gentil.png')
+var mechant     = PIXI.Sprite.from("./image/toupie_mechante.png")
+let background  = PIXI.Sprite.from('./image/arena.png')
+let bouton      = PIXI.Sprite.from('./image/button.png')
+let gentil      = PIXI.Sprite.from('./image/loick.png')
 
-var countMechantTotal = 200
+var countGentilVieTotal = app.view.width * 0.2
+var countGentilVie      = 0
+
+var countMechantTotal = app.view.width * 0.2
 var countMechant      = 0
 
 var stupidCountText = new PIXI.Text('', styleNumber)
-
-var basicText  = new PIXI.Text('3!!', styleNumber)
-var startText  = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
+var basicText       = new PIXI.Text('3!!', styleNumber)
+var startText       = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
 
 var speed       = 0
 var countHp     = 0
 var descCoef    = 0
 var stupidCount = 0
 
-var elapsed = 0.0
-var timer  = 0
+var elapsed      = 0.0
+var timer        = 0
 var timerHp      = 0
 var go           = false
 var isUltiActive = false
 var isContact    = null
 var mechantTimer = 0
 var countContact = 50
+
+var isFirstTime = true
 
 var mechantSpeed = 10
 var boutonOn     = false
@@ -59,16 +64,18 @@ app.stage.addChild(sprite)
 app.stage.addChild(mechant)
 app.stage.addChild(startText)
 app.stage.addChild(basicText)
+app.stage.addChild(teteGentil)
+app.stage.addChild(teteMechant)
 
 let progressBar = new PIXI.Graphics()
 progressBar.beginFill(0x20fc03)
-progressBar.drawRect(0, 10, countGentilVieTotal, 20)
+progressBar.drawRect(0, app.view.width * 0.02, countGentilVieTotal, app.view.width * 0.02)
 progressBar.zIndex = 20
 app.stage.addChild(progressBar)
 
 let progressBar2 = new PIXI.Graphics()
 progressBar2.beginFill(0x20fc03)
-progressBar2.drawRect(app.view.width - countMechantTotal - 10, 10, countMechantTotal, 20)
+progressBar2.drawRect(app.view.width - countMechantTotal - 10, app.view.width * 0.02, countMechantTotal, app.view.width * 0.02)
 progressBar2.zIndex = 20
 app.stage.addChild(progressBar2)
 
@@ -77,8 +84,8 @@ stupidCountText.x = app.view.width / 2
 stupidCountText.y = app.view.height * 0.05
 
 basicText.anchor.set(0.5)
-basicText.x = app.view.width /2
-basicText.y = app.view.height *0.9
+basicText.x      = app.view.width /2
+basicText.y      = app.view.height *0.9
 basicText.zIndex = 4
 
 startText.anchor.set(0.5)
@@ -89,20 +96,20 @@ background.zIndex = 0
 background.height = app.view.height
 background.width  = app.view.width
 
-sprite.zIndex      = 1
-sprite.anchor.x    = 0.5
-sprite.anchor.y    = 0.5
-sprite.width       = app.view.width *0.25
-sprite.height      = app.view.width *0.25
-sprite.x           = app.view.width /2
-sprite.y           = app.view.height / 2 + (sprite.height/2)
+sprite.zIndex   = 1
+sprite.anchor.x = 0.5
+sprite.anchor.y = 0.5
+sprite.width    = app.view.width *0.25
+sprite.height   = app.view.width *0.25
+sprite.x        = app.view.width /2
+sprite.y        = app.view.height / 2 + (sprite.height/2)
 
 sprite.interactive = true
 sprite.buttonMode  = true
 sprite.on('pointerdown', onClick)
 
-mechant.width    = app.view.width * 0.1
-mechant.height   = app.view.width *0.1
+mechant.width    = app.view.width * 0.15
+mechant.height   = app.view.width *0.15
 mechant.x        = app.view.width /2
 mechant.y        = -mechant.width/2
 mechant.anchor.x = 0.5
@@ -116,7 +123,23 @@ bouton.interactive = true
 bouton.buttonMode  = true
 bouton.on('pointerdown', onHold)
 
+teteGentil.x      = progressBar.x
+teteGentil.y      = progressBar.y + (app.view.width * 0.02) * 3
+teteGentil.width  = app.view.width * 0.1
+teteGentil.height = app.view.width * 0.1
+
+teteMechant.width  = app.view.width * 0.1
+teteMechant.height = app.view.width * 0.1
+teteMechant.x      = app.view.width - teteMechant.width - 10
+teteMechant.y      = progressBar2.y + (app.view.width * 0.02) * 3
+
+gentil.x      = app.view.width
+gentil.y      = 0
+gentil.height = app.view.height * 0.6
+gentil.width  = app.view.width * 0.6
+
 setInterval(reduceSize,0.1)
+setInterval(arriveDuHero, 0.1)
 app.ticker.add((delta) => {
     elapsed += delta;
     if (elapsed > timer && speed >= 1) {
@@ -124,24 +147,24 @@ app.ticker.add((delta) => {
         deplacementGentil()
         if (isContact) {
             if (countContact !== 0) {
-                mechant.x += 1
-                sprite.x  -= 1
+                mechant.x    += 1
+                sprite.x     -= 1
                 countContact -= 1
                 bonkObj.play()
             }
             else {
-                isContact = false
+                isContact    = false
                 countContact = 50
                 if (!isUltiActive) {
                     if (countGentilVie < 160)
                     {
-                        countGentilVie += 40
-                        countMechant   += 10
+                        countGentilVie += app.view.width * 0.04
+                        countMechant   += app.view.width * 0.01
 
                         progressBar.beginFill(0xfc0303)
-                        progressBar.drawRect(0, 10, countGentilVie, 20)
+                        progressBar.drawRect(0, app.view.width * 0.02, countGentilVie, app.view.width * 0.02)
                         progressBar2.beginFill(0xfc0303)
-                        progressBar2.drawRect(app.view.width - countMechant - 10, 10, countMechant, 20)
+                        progressBar2.drawRect(app.view.width - countMechant - 10, app.view.width * 0.02, countMechant, app.view.width * 0.02)
 
                     }
                 }
@@ -212,10 +235,23 @@ function counter()
 }
 function reduceSize()
 {
-    if (elapsed >= timer - 100 && elapsed < timer && timer !== 0 && app.view.width *0.1) {
-        sprite.width -= 2
+    if (elapsed >= timer - 100 && elapsed < timer && timer !== 0 && sprite.width > app.view.width *0.15) {
+        sprite.width  -= 2
         sprite.height -= 2
     }
+}
+function arriveDuHero()
+{
+    if (isUltiActive) {
+        if (isFirstTime) {
+            isFirstTime = false
+            app.stage.addChild(gentil)
+        }
+        if (gentil.x > app.view.width*0.4)
+            gentil.x -= 5
+    }
+
+
 }
 function deplacementMechant()
 {
@@ -329,24 +365,19 @@ function onHit(e,number)
     e.target.destroy()
     order[number] = true
     var bool = true
-    for (let i = 0; i < number; i++)
-    {
-        if (order[i] === true)
-        {
+    for (let i = 0; i < number; i++) {
+        if (order[i] === true) {
             bool = true
         }
-        else
-        {
+        else {
             bool = false
             break
         }
     }
-    if (bool && number === order.length - 1)
-    {
+    if (bool && number === order.length - 1) {
         win()
     }
-    else if (!bool)
-    {
+    else if (!bool) {
         loose()
     }
 }
@@ -374,22 +405,21 @@ function onClick()
         }
         countHp += 1
         if (countHp <= 3) {
-            stupidCount = Math.round(countHp * 14.21)
+            stupidCount = Math.round(countHp * 141.21)
             stupidSize  = 20
         } else if (countHp <= 8) {
-            stupidCount = Math.round(countHp * 889.74)
+            stupidCount = Math.round(countHp * 8894.74)
             stupidSize  = 24
         } else if (countHp <= 15) {
-            stupidCount = Math.round(countHp * 1457.68)
+            stupidCount = Math.round(countHp * 14577.68)
             stupidSize  = 30
-        } else if (countHp <= 20) {
-            stupidCount = Math.round(countHp * 8154.56)
+        } else if (countHp >= 15) {
+            stupidCount = Math.round(countHp * 81544.56)
             stupidSize = 50
         }
         stupidCountText.text = ""
-        stupidCountText.text = 'x' + stupidCount
+        stupidCountText.text = stupidCount + 'KM/H'
         app.stage.addChild(stupidCountText)
         descCoef = speed * 0.004
     }
-
-}
+    }
