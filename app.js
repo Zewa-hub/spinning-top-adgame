@@ -1,4 +1,4 @@
-let app = new PIXI.Application({ width: 640, height: 360 })
+var app = new PIXI.Application({ width: 640, height: 360 })
 document.body.appendChild(app.view)
 
 const style = new PIXI.TextStyle({
@@ -19,12 +19,15 @@ const style = new PIXI.TextStyle({
     lineJoin: 'round',
 })
 
-var sprite          = PIXI.Sprite.from('./image/toupie_gentil.png')
-var mechant         = PIXI.Sprite.from("./image/toupie_mechante.png")
-let background      = PIXI.Sprite.from('./image/arena.jpg')
-let bouton          = PIXI.Sprite.from('./image/dollar.jpg')
-var basicText       = new PIXI.Text('3!!', style)
-var startText       = new PIXI.Text('Appuyez vite sur la toupie !!!', style)
+var audioObj   = new Audio('./image/tg.mp3')
+var sprite     = PIXI.Sprite.from('./image/toupie_gentil.png')
+var mechant    = PIXI.Sprite.from("./image/toupie_mechante.png")
+let background = PIXI.Sprite.from('./image/arena.jpg')
+let bouton     = PIXI.Sprite.from('./image/dollar.jpg')
+var basicText  = new PIXI.Text('3!!', style)
+var startText  = new PIXI.Text('Appuyez vite sur la toupie !!!', style)
+
+var countGentilVie = 100
 
 var speed       = 0
 var countHp     = 0
@@ -32,22 +35,30 @@ var descCoef    = 0
 var stupidCount = 0
 
 var elapsed = 0.0
-var timer   = 0
-var timerHp = 0
-var go      = false
-var isContact = null
+var timer  = 0
+var timerHp      = 0
+var go           = false
+var isContact    = null
 var mechantTimer = 0
 var countContact = 50
 
 var mechantSpeed = 10
 var boutonOn     = false
-var vitesseChoc = 5
+var vitesseChoc  = 5
 
 app.stage.addChild(background)
 app.stage.addChild(sprite)
 app.stage.addChild(mechant)
 app.stage.addChild(startText)
 app.stage.addChild(basicText)
+
+let progressBarContainer = new PIXI.Container();
+let progressBar = new PIXI.Graphics();
+progressBarContainer.addChild(progressBar);
+app.stage.addChild(progressBarContainer)
+progressBarContainer.zIndex = 20
+
+progressBar.position = (countGentilVie, 0)
 
 basicText.anchor.set(0.5)
 basicText.x = 320
@@ -100,8 +111,7 @@ app.ticker.add((delta) => {
                 sprite.x  -= 1
                 countContact -= 1
             }
-            else
-            {
+            else {
                 isContact = false
                 countContact = 50
             }
@@ -126,6 +136,8 @@ function isTouched()
             || mechant.y > sprite.y + ((sprite.height + margin) /2)
             || (mechant.y + mechant.height/2) < sprite.y )
         && !isContact) {
+        audioObj.play()
+        countGentilVie -= 20;
         return true
     }
     else
@@ -133,7 +145,6 @@ function isTouched()
 }
 function deplacementGentil()
 {
-
     if(isTouched())
     {
         isContact = false
@@ -205,9 +216,22 @@ function onHold()
 {
     speed        = 57
     mechantTimer = elapsed + 100
+    ultimate()
     if (elapsed >= mechantTimer) {
         mechant.destroy()
     }
+}
+
+function ultimate()
+{
+    var loick = PIXI.Sprite.from('./image/loick.png')
+    loick.x = 0
+    loick.y = 0
+    loick.height = app.height * 0.8
+    loick.width = app.width
+    loick.zIndex = 150
+    app.stage.addChild(loick)
+
 }
 
 function onClick()
@@ -225,16 +249,16 @@ function onClick()
         countHp += 1
         if (countHp <= 3) {
             stupidCount = Math.round(countHp * 14.21)
-            stupidSize  = 10
+            stupidSize  = 20
         } else if (countHp <= 8) {
-            stupidCount = Math.round(countHp * 8897.74)
-            stupidSize  = 14
+            stupidCount = Math.round(countHp * 889.74)
+            stupidSize  = 24
         } else if (countHp <= 15) {
-            stupidCount = Math.round(countHp * 145713.68)
-            stupidSize  = 16
+            stupidCount = Math.round(countHp * 1457.68)
+            stupidSize  = 30
         } else if (countHp <= 20) {
-            stupidCount = Math.round(countHp * 2154478.56)
-            stupidSize = 20
+            stupidCount = Math.round(countHp * 21544.56)
+            stupidSize = 50
         }
 
         var styleNumber = new PIXI.TextStyle({
