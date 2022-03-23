@@ -1,6 +1,7 @@
 let app = new PIXI.Application({ width: 640, height: 360 })
 document.body.appendChild(app.view)
 
+
 const style = new PIXI.TextStyle({
     fontFamily: 'Arial',
     fontSize: 12,
@@ -179,11 +180,139 @@ function deplacementMechant()
 
 function onHold()
 {
-    speed        = 57
-    mechantTimer = elapsed + 100
-    if (elapsed >= mechantTimer) {
-        mechant.destroy()
+    var ultimateTimer = elapsed
+    var ultVerif = false
+
+const style = new PIXI.TextStyle({
+    fontFamily: 'Arial',
+    fontSize: 12,
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    fill: ['#ffffff', '#00ff99'], // gradient
+    stroke: '#4a1850',
+    strokeThickness: 5,
+    dropShadow: true,
+    dropShadowColor: '#000000',
+    dropShadowBlur: 4,
+    dropShadowAngle: Math.PI / 6,
+    dropShadowDistance: 6,
+    wordWrap: true,
+    wordWrapWidth: 440,
+    lineJoin: 'round',
+})
+    var fondNoir     = PIXI.Sprite.from('./image/fondNoir.jpg')
+    var button1      = PIXI.Sprite.from('./image/toupie.webp')
+    var button2      = PIXI.Sprite.from('./image/toupie.webp')
+    var button3      = PIXI.Sprite.from('./image/toupie.webp')
+    var button4      = PIXI.Sprite.from('./image/toupie.webp')
+    var ultText      = new PIXI.Text('TEST ULTIME', style)
+
+
+    fondNoir.zIndex      = 5
+    fondNoir.x           = 0
+    fondNoir.y           = 0
+    fondNoir.width       = 1000
+    fondNoir.height      = 1000
+
+    basicText.anchor.set(0.5)
+    basicText.x = 305
+    basicText.y = 45
+    basicText.zIndex = 4
+
+    button1.zIndex      = 6
+    button1.x           = 400
+    button1.y           = 50
+    button1.width       = 30
+    button1.height      = 30
+    button1.interactive = true
+    button1.buttonMode  = true
+    button1.on('pointerdown', onClick1)
+
+    button2.zIndex      = 6
+    button2.x           = 500
+    button2.y           = 250
+    button2.width       = 30
+    button2.height      = 30
+    button2.interactive = true
+    button2.buttonMode  = true
+    button2.on('pointerdown', onClick2)
+
+    button3.zIndex      = 6
+    button3.x           = 50
+    button3.y           = 300
+    button3.width       = 30
+    button3.height      = 30
+    button3.interactive = true
+    button3.buttonMode  = true
+    button3.on('pointerdown', onClick3)
+        
+    button4.zIndex      = 2
+    button4.x           = 250
+    button4.y           = 120
+    button4.width       = 30
+    button4.height      = 30
+    button4.interactive = true
+    button4.buttonMode  = true
+    button4.on('pointerdown', onClick4)
+
+
+    app.stage.addChild(button1)
+    app.stage.addChild(button2)
+    app.stage.addChild(button3)
+    app.stage.addChild(button4)
+    app.stage.addchild(fondNoir)
+
+
+
+function onClick1(){
+    button1.destroy()
+    var clicked1 = 1
+    return clicked1
+}
+function onClick2(){
+    button2.destroy()
+    var clicked2 = 1
+    return clicked2
+}
+function onClick3(){
+    button3.destroy()
+    var clicked3 = 1
+    return clicked3
+}
+function onClick4(){
+    button4.destroy()
+    var clicked4 = 1
+    return clicked4
+}
+
+
+    while(elapsed <= ultimateTimer + 250 ){
+        if(clicked1 == 1 && clicked2 == 1 && clicked3 == 1 && clicked4 == 1){
+            ultVerif = true
+        }
+
+    if(ultVerif == true){
+        app.stage.addChild(ultText)
+        fondNoir.destroy()
+        speed        = 57
+        mechantTimer = elapsed + 100
+        if (elapsed >= mechantTimer && mechant.transform != null) {
+            mechant.destroy()
+        }
     }
+    else{
+        fondNoir.destroy()
+        speed        = 0
+        mechantTimer = elapsed + 100
+        if (elapsed >= mechantTimer && mechant.transform != null) {
+            mechant.destroy()
+        }
+    }
+
+
+    
+
+}
 }
 
 function onClick()
