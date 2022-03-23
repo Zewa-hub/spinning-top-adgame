@@ -17,7 +17,6 @@ var styleNumber = new PIXI.TextStyle({
     "strokeThickness": 0.5
 })
 
-var audioObj   = new Audio('./image/tg.mp3')
 var bonkObj    = new Audio('./image/bonk.mp3')
 var songObj    = new Audio('./image/song2.mp4')
 var sprite     = PIXI.Sprite.from('./image/toupie_gentil.png')
@@ -379,24 +378,6 @@ function onClick()
             stupidCount = Math.round(countHp * 21544.56)
             stupidSize = 50
         }
-        /*
-        var styleNumber = new PIXI.TextStyle({
-            fontFamily: 'Bungee',
-            fontSize: stupidSize,
-            fontWeight: 'bold',
-            fill: ['#ffffff', '#000000'],
-            stroke: '#4a1850',
-            strokeThickness: 5,
-            dropShadow: true,
-            dropShadowColor: '#000000',
-            dropShadowBlur: 4,
-            dropShadowAngle: Math.PI / 6,
-            dropShadowDistance: 6,
-            wordWrap: true,
-            wordWrapWidth: 440,
-            lineJoin: 'round',
-        })
-         */
         stupidCountText.text = ""
         stupidCountText.text = 'x' + stupidCount
         app.stage.addChild(stupidCountText)
