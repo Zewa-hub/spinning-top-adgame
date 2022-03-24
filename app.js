@@ -32,8 +32,6 @@ var styleNumber = new PIXI.TextStyle({
 var songObj     = new Audio('./image/song2.mp4')
 var sound1      = new Audio('./image/epee5.mp3')
 var sound2      = new Audio('./image/epee6.mp3')
-var teteGentil  = PIXI.Sprite.from('./image/tete_de_loick.png')
-var teteMechant = PIXI.Sprite.from('./image/tete_de_mechant.png')
 var sprite      = PIXI.Sprite.from('./image/toupie_gentil.png')
 var mechant     = PIXI.Sprite.from("./image/toupie_mechante.png")
 let background  = PIXI.Sprite.from('./image/arena.png')
@@ -41,8 +39,6 @@ let bouton      = PIXI.Sprite.from('./image/button.png')
 let gentil      = PIXI.Sprite.from('./image/loick-removed.png')
 var gr          = new PIXI.Graphics();
 var br          = new PIXI.Graphics();
-
-
 
 var countGentilVieTotal = app.view.width * 0.2
 var countGentilVie      = 0
@@ -80,8 +76,6 @@ app.stage.addChild(sprite)
 app.stage.addChild(mechant)
 app.stage.addChild(startText)
 app.stage.addChild(basicText)
-app.stage.addChild(teteGentil)
-app.stage.addChild(teteMechant)
 app.stage.addChild(ultimateText)
 
 let progressBar = new PIXI.Graphics()
@@ -146,16 +140,6 @@ bouton.height      = 50
 bouton.interactive = true
 bouton.buttonMode  = true
 bouton.on('pointerdown', onHold)
-
-teteGentil.x      = progressBar.x
-teteGentil.y      = progressBar.y + (app.view.width * 0.02) * 3
-teteGentil.width  = app.view.width * 0.1
-teteGentil.height = app.view.width * 0.1
-
-teteMechant.width  = app.view.width * 0.1
-teteMechant.height = app.view.width * 0.1
-teteMechant.x      = app.view.width - teteMechant.width - 10
-teteMechant.y      = progressBar2.y + (app.view.width * 0.02) * 3
 
 gentil.x      = app.view.width
 gentil.y      = app.view.height * 0.2
@@ -516,7 +500,7 @@ function onClick()
         stupidCount = speed
     }
     if (elapsed <= timer) {
-        songObj.play()
+        //songObj.play()
         if (speed < 40) {
             speed=speed * 1.2
         }
