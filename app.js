@@ -1,5 +1,5 @@
 var height = 360
-var width = 640
+var width  = 640
 
 let textureArray = [];
 
@@ -102,8 +102,8 @@ stupidCountText.y = app.view.height * 0.05
 
 
 basicText.anchor.set(0.5)
-basicText.x      = app.view.width /2
-basicText.y      = app.view.height *0.45
+basicText.x      = app.view.width / 2
+basicText.y      = app.view.height * 0.45
 basicText.zIndex = 4
 
 startText.anchor.set(0.5)
@@ -111,8 +111,8 @@ startText.x = app.view.width / 2
 startText.y = app.view.height * 0.4
 
 ultimateText.anchor.set(0.5)
-ultimateText.x = app.view.width*0.65
-ultimateText.y = app.view.height*0.8
+ultimateText.x = app.view.width * 0.65
+ultimateText.y = app.view.height * 0.8
 
 background.zIndex = 0
 background.height = app.view.height
@@ -121,19 +121,19 @@ background.width  = app.view.width
 sprite.zIndex   = 1
 sprite.anchor.x = 0.5
 sprite.anchor.y = 0.5
-sprite.width    = app.view.width *0.25
-sprite.height   = app.view.width *0.25
-sprite.x        = app.view.width /2
-sprite.y        = app.view.height / 2 + (sprite.height/2)
+sprite.width    = app.view.width * 0.25
+sprite.height   = app.view.width * 0.25
+sprite.x        = app.view.width / 2
+sprite.y        = app.view.height / 2 + (sprite.height / 2)
 
 sprite.interactive = true
 sprite.buttonMode  = true
 sprite.on('pointerdown', onClick)
 
 mechant.width    = app.view.width * 0.15
-mechant.height   = app.view.width *0.15
-mechant.x        = app.view.width /2
-mechant.y        = -mechant.width/2
+mechant.height   = app.view.width * 0.15
+mechant.x        = app.view.width / 2
+mechant.y        = -mechant.width / 2
 mechant.anchor.x = 0.5
 mechant.anchor.y = 0.5
 
@@ -158,7 +158,7 @@ teteMechant.x      = app.view.width - teteMechant.width - 10
 teteMechant.y      = progressBar2.y + (app.view.width * 0.02) * 3
 
 gentil.x      = app.view.width
-gentil.y      = app.view.height *0.2
+gentil.y      = app.view.height * 0.2
 gentil.height = app.view.height * 0.6
 gentil.width  = app.view.width * 0.4
 
@@ -335,15 +335,15 @@ function arriveDuHero()
 {
     if (isUltiActive) {
         if (isFirstTime) {
-            isFirstTime = false
-            gentil.zIndex = 1
-            gr.zIndex = 2
-            animatedSprite.x = 0
-            animatedSprite.y = 0
-            animatedSprite.width = app.view.width
+            isFirstTime           = false
+            gentil.zIndex         = 1
+            gr.zIndex             = 2
+            animatedSprite.x      = 0
+            animatedSprite.y      = 0
+            animatedSprite.width  = app.view.width
             animatedSprite.height = app.view.height
-            animatedSprite.play();
-            animatedSprite.zIndex = -1
+            animatedSprite.play()
+            animatedSprite.zIndex         = -1
             animatedSprite.animationSpeed = 3
             app.stage.addChild(animatedSprite)
             app.stage.addChild(gr)
@@ -353,12 +353,12 @@ function arriveDuHero()
         if (gentil.x > app.view.width*0.6)
             gentil.x -= 30
         else{
-            gr.beginFill(0xffffff);
-            gr.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200);
-            gr.endFill();
-            br.beginFill(0xffffff);
-            br.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200);
-            br.endFill();
+            gr.beginFill(0xffffff)
+            gr.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200)
+            gr.endFill()
+            br.beginFill(0xffffff)
+            br.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200)
+            br.endFill()
         }
     }
 
@@ -393,8 +393,7 @@ function deplacementMechant()
             pause()
         }
         isContact = true
-        speed -= descCoef
-        console.log(speed)
+        speed     -= descCoef
     }
 }
 
@@ -402,7 +401,6 @@ function pause()
 {
     speed = -1
     go = false
-
 }
 
 function onHold()
@@ -483,7 +481,7 @@ function onHit(e,number)
 {
     e.target.destroy()
     order[number] = true
-    var bool = true
+    var bool      = true
     for (let i = 0; i < number; i++) {
         if (order[i] === true) {
             bool = true
@@ -541,4 +539,4 @@ function onClick()
         app.stage.addChild(stupidCountText)
         descCoef = speed * 0.004
     }
-    }
+}
