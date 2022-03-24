@@ -1,0 +1,49 @@
+canvas {
+    width: 100%;
+    height: 92%;
+    position: absolute;
+    top: 8%;
+    left: 0;
+}
+
+.bandeau {
+    top: 0;
+    z-index: 100;
+    overflow: auto;
+}
+
+.container {
+    overflow:auto;
+}
+
+button {
+    border: 1px solid black;
+    background-color: red;
+    border-radius: 15px;
+    float:left;
+    font-size: 2em;
+}
+
+a {
+    outline: none;
+    text-decoration: none;
+    color: white;
+}
+
+html {
+    background-color: black;
+    background-size: cover;
+    background-image: url("./image/voodoogame.jpg");
+}
+
+.students {
+    font-size: 2em;
+    border: 1px solid black;
+    background-color: cornflowerblue;
+    border-radius: 15px;
+    float:right;
+}
+
+.students > option {
+    font-size: 1em;
+}

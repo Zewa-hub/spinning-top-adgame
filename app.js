@@ -206,7 +206,7 @@ function arrivePanneau()
 }
 function ticker()
 {
-    elapsed += 0.8;
+    elapsed += 0.3;
     if (elapsed > timer && timer !== 0 && speed > 0 ) {
         go = true
         deplacementGentil()
