@@ -6,8 +6,9 @@ let textureArray = [];
 for (let i=0; i < 48; i++)
 {
     let texture = PIXI.Texture.from("./image/background/frame_" + i + "_delay-0.02s.png");
-    textureArray.push(texture);
-};
+    textureArray.push(texture)
+}
+
 var animatedSprite = new PIXI.AnimatedSprite(textureArray)
 
 var order = [false,false,false,false]
@@ -28,8 +29,9 @@ var styleNumber = new PIXI.TextStyle({
     "strokeThickness": 0.5
 })
 
-var bonkObj     = new Audio('./image/bonk.mp3')
 var songObj     = new Audio('./image/song2.mp4')
+var sound1      = new Audio('./image/epee5.mp3')
+var sound2      = new Audio('./image/epee6.mp3')
 var teteGentil  = PIXI.Sprite.from('./image/tete_de_loick.png')
 var teteMechant = PIXI.Sprite.from('./image/tete_de_mechant.png')
 var sprite      = PIXI.Sprite.from('./image/toupie_gentil.png')
@@ -229,7 +231,7 @@ function ticker()
                 mechant.x    += 1
                 sprite.x     -= 1
                 countContact -= 1
-                bonkObj.play()
+                soundEffect()
             }
             else {
                 isContact    = false
@@ -260,6 +262,17 @@ function ticker()
 
     sprite.angle += speed
 }
+
+function soundEffect()
+{
+    randomInt = Math.floor(Math.random() * 2)
+    if (randomInt === 0){
+        sound1.play()
+    } else {
+        sound2.play()
+    }
+}
+
 function isTouched()
 {
     let margin = sprite.width * 0.50
