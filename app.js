@@ -3,13 +3,28 @@ var width  = 640
 
 let textureArray = [];
 
+var texture;
+
 for (let i=0; i < 48; i++)
 {
-    let texture = PIXI.Texture.from("./image/background/frame_" + i + "_delay-0.02s.png");
+    texture = PIXI.Texture.from("./image/background/frame_" + i + "_delay-0.02s.png");
     textureArray.push(texture)
 }
 
 var animatedSprite = new PIXI.AnimatedSprite(textureArray)
+
+textureArray = []
+
+for (let i=0; i < 64; i++)
+{
+    if (i >= 10 )
+        texture = PIXI.Texture.from("./image/ultimateFX/tile0" + i + ".png");
+    else
+        texture = PIXI.Texture.from("./image/ultimateFX/tile00" + i + ".png");
+    textureArray.push(texture)
+}
+
+var fx = new PIXI.AnimatedSprite(textureArray)
 
 var order = [false,false,false,false]
 //var app = new PIXI.Application({height: height, width: width})
@@ -272,11 +287,35 @@ function playSong() {
     choixText.text = ''
 }
 
+jaune.mouseover = function() {
+    setInterval(turnFastJaune, 0.1)
+};
 
-var button1 = PIXI.Sprite.from('./image/button1.jpg')
-var button2 = PIXI.Sprite.from('./image/button2.jpg')
-var button3 = PIXI.Sprite.from('./image/button3.webp')
-var button4 = PIXI.Sprite.from('./image/button4.webp')
+bleu.mouseover = function() {
+    setInterval(turnFastBleu, 0.1)
+};
+
+setInterval(turn,0.1)
+
+function turn() {
+    if (turnToopie) {
+        jaune.angle += 0.1
+        bleu.angle  += 0.1
+    }
+}
+
+function turnFastJaune() {
+    jaune.angle += 10
+}
+
+function turnFastBleu() {
+    bleu.angle += 10
+}
+
+var button1 = PIXI.Sprite.from('./image/button1.png')
+var button2 = PIXI.Sprite.from('./image/button2.png')
+var button3 = PIXI.Sprite.from('./image/button3.png')
+var button4 = PIXI.Sprite.from('./image/button4.png')
 
 let tabPositionButton = [app.view.width *0.10, app.view.width *0.30,app.view.width *0.50, app.view.width *0.70]
 shuffle(tabPositionButton)
@@ -305,7 +344,6 @@ button1.width       = app.view.width*0.1
 button1.height      = app.view.width*0.1
 button1.interactive = true
 button1.buttonMode  = true
-
 
 button2.zIndex      = 2
 button2.x           = tabPositionButton[1]
@@ -575,42 +613,68 @@ function onHit(e,number)
 }
 function win()
 {
-    FinalText.anchor.set(0.5)
-    FinalText.x = app.view.width * 0.5
-    FinalText.y = app.view.height * 0.5
-    FinalText.text = "You win !"
     bgUlti.zIndex = 80
-    app.stage.removeChild(progressBar2)
-    app.stage.removeChild(pointVie2)
-    progressBar2.beginFill(0xfc0303)
-    progressBar2.drawRect(app.view.width - countMechantTotal, app.view.height * 0.02, countMechantTotal, app.view.width * 0.02)
-    app.stage.addChild(progressBar2)
-    app.stage.addChild(pointVie2)
-    app.stage.addChild(bgUlti)
-    app.stage.addChild(FinalText)
+    loadingMessage("You win !")
+    updateVie(1)
+    fx.anchor.set(0.5)
+    fx.x      = sprite.x
+    fx.y      = sprite.y
+    fx.width  = sprite.width * 2
+    fx.height = sprite.height * 2
+    fx.play()
+    fx.zIndex         = -1
+    fx.animationSpeed = 1
+    app.stage.addChild(fx)
+    afficheMessage()
+
+
     mechantSpeed = 1
     speed        = 57
-    console.log("gagné !")
 
 }
 function loose()
 {
+    bgUlti.zIndex = 80
+    loadingMessage("You loose !")
+    updateVie(2)
+    afficheMessage()
+    mechantSpeed = 57
+    speed        = 1
+}
+function afficheMessage()
+{
+    app.stage.addChild(bgUlti)
+    app.stage.addChild(FinalText)
+}
+function loadingMessage(text)
+{
     FinalText.anchor.set(0.5)
     FinalText.x = app.view.width * 0.5
     FinalText.y = app.view.height * 0.5
-    FinalText.text = "You loose !"
-    bgUlti.zIndex = 80
-    app.stage.removeChild(progressBar)
-    app.stage.removeChild(pointVie)
-    progressBar.beginFill(0xfc0303)
-    progressBar.drawRect(0, app.view.height * 0.02, countGentilVieTotal, app.view.width * 0.02)
-    app.stage.addChild(progressBar)
-    app.stage.addChild(pointVie)
-    app.stage.addChild(bgUlti)
-    app.stage.addChild(FinalText)
-    mechantSpeed = 57
-    speed        = 1
-    console.log("perdu !")
+    FinalText.text = text
+
+}
+function updateVie(number)
+{
+    if (number == 1)
+    {
+        app.stage.removeChild(progressBar2)
+        app.stage.removeChild(pointVie2)
+        progressBar2.beginFill(0xfc0303)
+        progressBar2.drawRect(app.view.width - countMechantTotal, app.view.height * 0.02, countMechantTotal, app.view.width * 0.02)
+        app.stage.addChild(progressBar2)
+        app.stage.addChild(pointVie2)
+    }
+    else
+    {
+        app.stage.removeChild(progressBar)
+        app.stage.removeChild(pointVie)
+        progressBar.beginFill(0xfc0303)
+        progressBar.drawRect(0, app.view.height * 0.02, countGentilVieTotal, app.view.width * 0.02)
+        app.stage.addChild(progressBar)
+        app.stage.addChild(pointVie)
+    }
+
 }
 function onClick()
 {
