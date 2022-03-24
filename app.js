@@ -1,6 +1,15 @@
 var height = 360
 var width = 640
 
+let textureArray = [];
+
+for (let i=0; i < 48; i++)
+{
+    let texture = PIXI.Texture.from("./image/background/frame_" + i + "_delay-0.02s.png");
+    textureArray.push(texture);
+};
+var animatedSprite = new PIXI.AnimatedSprite(textureArray)
+
 var order = [false,false,false,false]
 //var app = new PIXI.Application({height: height, width: width})
 var app = new PIXI.Application({resizeTo : window})
@@ -27,7 +36,11 @@ var sprite      = PIXI.Sprite.from('./image/toupie_gentil.png')
 var mechant     = PIXI.Sprite.from("./image/toupie_mechante.png")
 let background  = PIXI.Sprite.from('./image/arena.png')
 let bouton      = PIXI.Sprite.from('./image/button.png')
-let gentil      = PIXI.Sprite.from('./image/loick.png')
+let gentil      = PIXI.Sprite.from('./image/loick-removed.png')
+var gr          = new PIXI.Graphics();
+var br          = new PIXI.Graphics();
+
+
 
 var countGentilVieTotal = app.view.width * 0.2
 var countGentilVie      = 0
@@ -36,8 +49,9 @@ var countMechantTotal = app.view.width * 0.2
 var countMechant      = 0
 
 var stupidCountText = new PIXI.Text('', styleNumber)
-var basicText       = new PIXI.Text('3!!', styleNumber)
+var basicText       = new PIXI.Text('3', styleNumber)
 var startText       = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
+var ultimateText    = new PIXI.Text('', styleNumber)
 
 var speed       = 0
 var countHp     = 0
@@ -66,6 +80,7 @@ app.stage.addChild(startText)
 app.stage.addChild(basicText)
 app.stage.addChild(teteGentil)
 app.stage.addChild(teteMechant)
+app.stage.addChild(ultimateText)
 
 let progressBar = new PIXI.Graphics()
 progressBar.beginFill(0x20fc03)
@@ -83,14 +98,19 @@ stupidCountText.anchor.set(0.5)
 stupidCountText.x = app.view.width / 2
 stupidCountText.y = app.view.height * 0.05
 
+
 basicText.anchor.set(0.5)
 basicText.x      = app.view.width /2
-basicText.y      = app.view.height *0.9
+basicText.y      = app.view.height *0.45
 basicText.zIndex = 4
 
 startText.anchor.set(0.5)
 startText.x = app.view.width / 2
-startText.y = app.view.height * 0.1
+startText.y = app.view.height * 0.4
+
+ultimateText.anchor.set(0.5)
+ultimateText.x = app.view.width*0.65
+ultimateText.y = app.view.height*0.8
 
 background.zIndex = 0
 background.height = app.view.height
@@ -115,6 +135,8 @@ mechant.y        = -mechant.width/2
 mechant.anchor.x = 0.5
 mechant.anchor.y = 0.5
 
+bouton.anchor.x = 0.5
+bouton.anchor.y = 0.5
 bouton.x           = app.view.width * 0.8
 bouton.y           = app.view.height * 0.8
 bouton.width       = 50
@@ -134,12 +156,15 @@ teteMechant.x      = app.view.width - teteMechant.width - 10
 teteMechant.y      = progressBar2.y + (app.view.width * 0.02) * 3
 
 gentil.x      = app.view.width
-gentil.y      = 0
+gentil.y      = app.view.height *0.2
 gentil.height = app.view.height * 0.6
-gentil.width  = app.view.width * 0.6
+gentil.width  = app.view.width * 0.4
 
+setInterval(ticker,0.8)
 setInterval(reduceSize,0.1)
 setInterval(arriveDuHero, 0.1)
+setInterval(arrivePanneau,500)
+/*
 app.ticker.add((delta) => {
     elapsed += delta;
     if (elapsed > timer && speed >= 1) {
@@ -180,8 +205,61 @@ app.ticker.add((delta) => {
     }
 
     sprite.angle += speed
-})
+})*/
 
+function arrivePanneau()
+{
+    if (boutonOn) {
+        if (ultimateText.text !== "") {
+            ultimateText.text = ""
+        } else {
+            console.log("Je suis dedans")
+            ultimateText.text = "Appuyez sur ce bouton !"
+        }
+    }
+}
+function ticker()
+{
+    elapsed += 0.8;
+    if (elapsed > timer && timer !== 0 && speed > 0 ) {
+        go = true
+        deplacementGentil()
+        if (isContact) {
+            if (countContact !== 0) {
+                mechant.x    += 1
+                sprite.x     -= 1
+                countContact -= 1
+                bonkObj.play()
+            }
+            else {
+                isContact    = false
+                countContact = 50
+                if (!isUltiActive) {
+                    if (countGentilVie < 160)
+                    {
+                        countGentilVie += app.view.width * 0.04
+                        countMechant   += app.view.width * 0.01
+
+                        progressBar.beginFill(0xfc0303)
+                        progressBar.drawRect(0, app.view.width * 0.02, countGentilVie, app.view.width * 0.02)
+                        progressBar2.beginFill(0xfc0303)
+                        progressBar2.drawRect(app.view.width - countMechant - 10, app.view.width * 0.02, countMechant, app.view.width * 0.02)
+
+                    }
+                }
+            }
+        }
+    }
+    counter()
+    if (mechant.transform != null) {
+        mechant.angle += mechantSpeed
+        if (go) {
+            deplacementMechant()
+        }
+    }
+
+    sprite.angle += speed
+}
 function isTouched()
 {
     let margin = sprite.width * 0.50
@@ -245,10 +323,30 @@ function arriveDuHero()
     if (isUltiActive) {
         if (isFirstTime) {
             isFirstTime = false
+            gentil.zIndex = 1
+            gr.zIndex = 2
+            animatedSprite.x = 0
+            animatedSprite.y = 0
+            animatedSprite.width = app.view.width
+            animatedSprite.height = app.view.height
+            animatedSprite.play();
+            animatedSprite.zIndex = -1
+            animatedSprite.animationSpeed = 3
+            app.stage.addChild(animatedSprite)
+            app.stage.addChild(gr)
             app.stage.addChild(gentil)
+
         }
-        if (gentil.x > app.view.width*0.4)
-            gentil.x -= 5
+        if (gentil.x > app.view.width*0.6)
+            gentil.x -= 30
+        else{
+            gr.beginFill(0xffffff);
+            gr.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200);
+            gr.endFill();
+            br.beginFill(0xffffff);
+            br.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200);
+            br.endFill();
+        }
     }
 
 
@@ -279,11 +377,19 @@ function deplacementMechant()
             app.stage.addChild(bouton)
             app.stage.addChild(basicText)
             boutonOn = true
+            pause()
         }
         isContact = true
         speed -= descCoef
         console.log(speed)
     }
+}
+
+function pause()
+{
+    speed = -1
+    go = false
+
 }
 
 function onHold()
