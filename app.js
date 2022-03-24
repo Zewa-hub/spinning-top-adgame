@@ -37,8 +37,15 @@ var mechant     = PIXI.Sprite.from("./image/toupie_mechante.png")
 let background  = PIXI.Sprite.from('./image/arena.png')
 let bouton      = PIXI.Sprite.from('./image/button.png')
 let gentil      = PIXI.Sprite.from('./image/loick-removed.png')
-var gr          = new PIXI.Graphics();
-var br          = new PIXI.Graphics();
+
+
+
+
+var bgUlti = new PIXI.Graphics()
+bgUlti.beginFill(0x000000)
+bgUlti.drawRect(0, 0, app.view.width, app.view.height)
+bgUlti.zIndex = -2
+bgUlti.alpha  = 0.5
 
 var countGentilVieTotal = app.view.width * 0.2
 var countGentilVie      = 0
@@ -50,6 +57,7 @@ var stupidCountText = new PIXI.Text('', styleNumber)
 var basicText       = new PIXI.Text('3', styleNumber)
 var startText       = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
 var ultimateText    = new PIXI.Text('', styleNumber)
+var FinalText       = new PIXI.Text('', styleNumber)
 
 var speed       = 0
 var countHp     = 0
@@ -93,7 +101,6 @@ app.stage.addChild(progressBar2)
 stupidCountText.anchor.set(0.5)
 stupidCountText.x = app.view.width / 2
 stupidCountText.y = app.view.height * 0.05
-
 
 basicText.anchor.set(0.5)
 basicText.x      = app.view.width / 2
@@ -146,52 +153,68 @@ gentil.y      = app.view.height * 0.2
 gentil.height = app.view.height * 0.6
 gentil.width  = app.view.width * 0.4
 
+var button1 = PIXI.Sprite.from('./image/button1.jpg')
+var button2 = PIXI.Sprite.from('./image/button2.jpg')
+var button3 = PIXI.Sprite.from('./image/button3.webp')
+var button4 = PIXI.Sprite.from('./image/button4.webp')
+
+let tabPositionButton = [app.view.width *0.10, app.view.width *0.30,app.view.width *0.50, app.view.width *0.70]
+shuffle(tabPositionButton)
+
+button1.on('pointerdown', function(e) { onHit(e,0); })
+button2.on('pointerdown', function(e) { onHit(e,1); })
+button3.on('pointerdown', function(e) { onHit(e,2); })
+button4.on('pointerdown', function(e) { onHit(e,3); })
+
+button1.anchor.x = 0.5
+button1.anchor.y = 0.5
+
+button2.anchor.x = 0.5
+button2.anchor.y = 0.5
+
+button3.anchor.x = 0.5
+button3.anchor.y = 0.5
+
+button4.anchor.x = 0.5
+button4.anchor.y = 0.5
+
+button1.zIndex      = 2
+button1.x           = tabPositionButton[0]
+button1.y           = gentil.y + gentil.width/2
+button1.width       = app.view.width*0.1
+button1.height      = app.view.width*0.1
+button1.interactive = true
+button1.buttonMode  = true
+
+
+button2.zIndex      = 2
+button2.x           = tabPositionButton[1]
+button2.y           = gentil.y + gentil.width/2
+button2.width       = app.view.width*0.1
+button2.height      = app.view.width*0.1
+button2.interactive = true
+button2.buttonMode  = true
+
+button3.zIndex      = 2
+button3.x           = tabPositionButton[2]
+button3.y           = gentil.y + gentil.width/2
+button3.width       = app.view.width*0.1
+button3.height      = app.view.width*0.1
+button3.interactive = true
+button3.buttonMode  = true
+
+button4.zIndex      = 2
+button4.x           = tabPositionButton[3]
+button4.y           = gentil.y + gentil.width/2
+button4.width       = app.view.width*0.1
+button4.height      = app.view.width*0.1
+button4.interactive = true
+button4.buttonMode  = true
+
 setInterval(ticker,0.8)
 setInterval(reduceSize,0.1)
 setInterval(arriveDuHero, 0.1)
 setInterval(arrivePanneau,500)
-/*
-app.ticker.add((delta) => {
-    elapsed += delta;
-    if (elapsed > timer && speed >= 1) {
-        go = true
-        deplacementGentil()
-        if (isContact) {
-            if (countContact !== 0) {
-                mechant.x    += 1
-                sprite.x     -= 1
-                countContact -= 1
-                bonkObj.play()
-            }
-            else {
-                isContact    = false
-                countContact = 50
-                if (!isUltiActive) {
-                    if (countGentilVie < 160)
-                    {
-                        countGentilVie += app.view.width * 0.04
-                        countMechant   += app.view.width * 0.01
-
-                        progressBar.beginFill(0xfc0303)
-                        progressBar.drawRect(0, app.view.width * 0.02, countGentilVie, app.view.width * 0.02)
-                        progressBar2.beginFill(0xfc0303)
-                        progressBar2.drawRect(app.view.width - countMechant - 10, app.view.width * 0.02, countMechant, app.view.width * 0.02)
-
-                    }
-                }
-            }
-        }
-    }
-    counter()
-    if (mechant.transform != null) {
-        mechant.angle += mechantSpeed
-        if (go) {
-            deplacementMechant()
-        }
-    }
-
-    sprite.angle += speed
-})*/
 
 function arrivePanneau()
 {
@@ -321,29 +344,24 @@ function arriveDuHero()
         if (isFirstTime) {
             isFirstTime           = false
             gentil.zIndex         = 1
-            gr.zIndex             = 2
             animatedSprite.x      = 0
-            animatedSprite.y      = 0
+            animatedSprite.y      = gentil.y
             animatedSprite.width  = app.view.width
-            animatedSprite.height = app.view.height
+            animatedSprite.height = gentil.height
             animatedSprite.play()
             animatedSprite.zIndex         = -1
             animatedSprite.animationSpeed = 3
+            app.stage.addChild(bgUlti)
             app.stage.addChild(animatedSprite)
-            app.stage.addChild(gr)
             app.stage.addChild(gentil)
+            app.stage.addChild(button1)
+            app.stage.addChild(button2)
+            app.stage.addChild(button3)
+            app.stage.addChild(button4)
 
         }
         if (gentil.x > app.view.width*0.6)
             gentil.x -= 30
-        else{
-            gr.beginFill(0xffffff)
-            gr.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200)
-            gr.endFill()
-            br.beginFill(0xffffff)
-            br.drawCircle(gentil.x+gentil.width/2,gentil.y+gentil.height/2, 200)
-            br.endFill()
-        }
     }
 
 
@@ -390,9 +408,7 @@ function pause()
 function onHold()
 {
     isUltiActive = true
-    speed        = 57
     mechantTimer = elapsed + 100
-    ultimate()
     /*
     if (elapsed >= mechantTimer) {
         mechant.destroy()
@@ -400,65 +416,14 @@ function onHold()
      */
 }
 
-function ultimate()
-{
-    var loick = PIXI.Sprite.from('./image/loick.png')
-    var button1 = PIXI.Sprite.from('./image/button1.jpg')
-    var button2 = PIXI.Sprite.from('./image/button2.jpg')
-    var button3 = PIXI.Sprite.from('./image/button3.webp')
-    var button4 = PIXI.Sprite.from('./image/button4.webp')
-
-
-    button1.on('pointerdown', function(e) { onHit(e,0); })
-    button2.on('pointerdown', function(e) { onHit(e,1); })
-    button3.on('pointerdown', function(e) { onHit(e,2); })
-    button4.on('pointerdown', function(e) { onHit(e,3); })
-
-    button1.zIndex      = 2
-    button1.x           = 0
-    button1.y           = 0
-    button1.width       = 30
-    button1.height      = 30
-    button1.interactive = true
-    button1.buttonMode  = true
-
-
-    button2.zIndex      = 2
-    button2.x           = width - 50
-    button2.y           = 10
-    button2.width       = 30
-    button2.height      = 30
-    button2.interactive = true
-    button2.buttonMode  = true
-
-    button3.zIndex      = 2
-    button3.x           = width / 2
-    button3.y           = width /3
-    button3.width       = 30
-    button3.height      = 30
-    button3.interactive = true
-    button3.buttonMode  = true
-
-    button4.zIndex      = 2
-    button4.x           = 0
-    button4.y           = 180
-    button4.width       = 30
-    button4.height      = 30
-    button4.interactive = true
-    button4.buttonMode  = true
-
-    app.stage.addChild(button1)
-    app.stage.addChild(button2)
-    app.stage.addChild(button3)
-    app.stage.addChild(button4)
-/*
-    loick.x = 0
-    loick.y = height*0.1
-    loick.height = height * 0.8
-    loick.width = width
-    loick.zIndex = 150
-    app.stage.addChild(loick)
-    */
+function desactivateUlti() {
+    app.stage.removeChild(bgUlti)
+    app.stage.removeChild(animatedSprite)
+    app.stage.removeChild(gentil)
+    app.stage.removeChild(button1)
+    app.stage.removeChild(button2)
+    app.stage.removeChild(button3)
+    app.stage.removeChild(button4)
 }
 
 function onHit(e,number)
@@ -476,6 +441,8 @@ function onHit(e,number)
         }
     }
     if (bool && number === order.length - 1) {
+        isUltiActive = false
+        desactivateUlti()
         win()
     }
     else if (!bool) {
@@ -484,6 +451,19 @@ function onHit(e,number)
 }
 function win()
 {
+    FinalText.anchor.set(0.5)
+    FinalText.x = app.view.width * 0.5
+    FinalText.y = app.view.height * 0.2
+    FinalText.text = "You win !"
+    app.stage.addChild(bgUlti)
+    app.stage.addChild(FinalText)
+    mechantSpeed = 1
+    speed        = 57
+    app.stage.removeChild(progressBar2)
+    progressBar2.beginFill(0xfc0303)
+    progressBar2.drawRect(app.view.width - countMechantTotal - 10, app.view.width * 0.02, countMechantTotal, app.view.width * 0.02)
+    app.stage.addChild(progressBar2)
+    progressBar2.zIndex = 20
     console.log("gagné !")
 
 }
@@ -523,4 +503,20 @@ function onClick()
         app.stage.addChild(stupidCountText)
         descCoef = speed * 0.004
     }
+}
+function shuffle(array) {
+    let currentIndex = array.length,  randomIndex;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+    return array;
 }
