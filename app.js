@@ -1,6 +1,7 @@
 var height = 360
 var width  = 640
 
+
 let textureArray = [];
 
 var texture;
@@ -57,22 +58,40 @@ var styleChoix = new PIXI.TextStyle({
     "strokeThickness": 0.5
 })
 
+var styleTitle = new PIXI.TextStyle({
+    "fill": [
+        "red",
+        "#ff8000"
+    ],
+    "fillGradientStops": [
+        1
+    ],
+    "fontFamily": "Impact",
+    "fontSize":150,
+    "strokeThickness": 0.5
+})
+
 var jaune = PIXI.Sprite.from('./image/toupie_gentil.png')
 var bleu  = PIXI.Sprite.from('./image/toupie_mechante.png')
 
-var songChoix   = new Audio('./image/songChoix.mp4')
+var songChoix   = new Audio('./image/songchoix.mp4')
 var songInGame  = new Audio('./image/songInGame.mp3')
 var choix       = new Audio('./image/choix.mp4')
 var sound1      = new Audio('./image/epee5.mp3')
 var sound2      = new Audio('./image/epee6.mp3')
 var sprite      = PIXI.Sprite.from('./image/toupie_gentil.png')
+
 var mechant     = PIXI.Sprite.from("./image/toupie_mechante.png")
 let background  = PIXI.Sprite.from('./image/arena.png')
 let bouton      = PIXI.Sprite.from('./image/button.png')
 let gentil      = PIXI.Sprite.from('./image/loick-removed.png')
-var pointVie     = PIXI.Sprite.from("./image/point_de_vie.png")
-var pointVie2    = PIXI.Sprite.from("./image/point_de_vie.png")
+var pointVie    = PIXI.Sprite.from("./image/point_de_vie.png")
+var pointVie2   = PIXI.Sprite.from("./image/point_de_vie.png")
+var titleText   = new PIXI.Text("BoulBleyde TM", styleTitle)
+var souffleAir  = new Audio('./image/souffleair.mp3')
 
+var epitaLogo    = PIXI.Sprite.from("./image/Epita.png")
+var eArtSup      = PIXI.Sprite.from("./image/eartsup.png")
 let bluebg      = PIXI.Sprite.from('./image/blue.png')
 
 function choose(int) {
@@ -86,6 +105,7 @@ function choose(int) {
     app.stage.removeChild(bluebg)
     app.stage.removeChild(jaune)
     app.stage.removeChild(bleu)
+    app.stage.removeChild(titleText)
     songChoix.pause()
     choix.play()
     songInGame.play()
@@ -129,6 +149,8 @@ var basicText       = new PIXI.Text('3', styleNumber)
 var startText       = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
 var ultimateText    = new PIXI.Text('', styleNumber)
 var FinalText       = new PIXI.Text('', styleNumber)
+var credit          = new PIXI.Text('', styleNumber)
+
 var choixText       = new PIXI.Text('Choisis TA toupie', styleChoix)
 
 var speed       = 0
@@ -159,6 +181,7 @@ app.stage.addChild(bluebg)
 app.stage.addChild(jaune)
 app.stage.addChild(bleu)
 app.stage.addChild(choixText)
+app.stage.addChild(titleText)
 
 let progressBar = new PIXI.Graphics()
 progressBar.beginFill(0x20fc03)
@@ -230,6 +253,7 @@ mechant.y        = -mechant.width / 2
 mechant.anchor.x = 0.5
 mechant.anchor.y = 0.5
 
+
 bouton.anchor.x = 0.5
 bouton.anchor.y = 0.5
 bouton.x           = app.view.width * 0.8
@@ -257,7 +281,16 @@ choixText.on('pointerdown', () => {
     playSong()
 });
 
+titleText.x = app.view.width / 2
+titleText.y = app.view.height * 0.1
+titleText.anchor.x = 0.5
+titleText.anchor.y = 0.5
+titleText.zIndex = 41
+
+var turnToopie = false
+
 function playSong() {
+    turnToopie     = true
     jaune.zIndex   = 1
     jaune.anchor.x = 0.5
     jaune.anchor.y = 0.5
@@ -399,7 +432,6 @@ function ticker()
                 mechant.x    += 1
                 sprite.x     -= 1
                 countContact -= 1
-                //soundEffect()
             }
             else {
                 isContact    = false
@@ -430,7 +462,17 @@ function ticker()
 
     sprite.angle += speed
 }
+function rectIntersect(a,b)
+{
+    let aBox = a.getBounds()
+    let bBox = b.getBounds()
 
+    return aBox.x + aBox.width > bBox.x
+        && aBox.x < bBox.x + bBox.width
+        && aBox.y + aBox.height > bBox.y
+        && aBox.y < bBox.y + bBox.height
+
+}
 function soundEffect()
 {
     randomInt = Math.floor(Math.random() * 2)
@@ -444,6 +486,7 @@ function soundEffect()
 function isTouched()
 {
     let margin = sprite.width * 0.50
+    //return (!rectIntersect(sprite, mechant) && !isContact)
     return (mechant.x > sprite.x + ((sprite.width + margin) / 2)
             || (mechant.x + mechant.width / 2) < sprite.x
             || mechant.y > sprite.y + ((sprite.height + margin) / 2)
@@ -588,6 +631,7 @@ function desactivateUlti() {
 
 function onHit(e,number)
 {
+    soundEffect()
     e.target.destroy()
     order[number] = true
     var bool      = true
@@ -645,13 +689,29 @@ function afficheMessage()
 {
     app.stage.addChild(bgUlti)
     app.stage.addChild(FinalText)
+    app.stage.addChild(credit)
+    app.stage.addChild(epitaLogo)
+    app.stage.addChild(eArtSup)
 }
-function loadingMessage(text)
-{
+function loadingMessage(text) {
     FinalText.anchor.set(0.5)
+    //credit.anchor.set(0.5)
     FinalText.x = app.view.width * 0.5
     FinalText.y = app.view.height * 0.5
     FinalText.text = text
+    credit.x = 0
+    credit.y = 0
+    credit.text = "Developpeur: Abdelaziz Mansouri, Paul Granger, Valentin Dumousset \nDesigner: Alicia Maurice \nGame Designer: Alexandre Fraoili"
+
+    epitaLogo.width = app.view.width * 0.2
+    epitaLogo.height = app.view.height * 0.2
+    epitaLogo.x = 0
+    epitaLogo.y = app.view.height - epitaLogo.height
+
+    eArtSup.width = app.view.width * 0.2
+    eArtSup.height = app.view.height * 0.2
+    eArtSup.x = app.view.width - eArtSup.width
+    eArtSup.y = app.view.height - eArtSup.height
 
 }
 function updateVie(number)
@@ -678,6 +738,7 @@ function updateVie(number)
 }
 function onClick()
 {
+    souffleAir.play()
     if (speed === 0) {
         app.stage.removeChild(startText)
         speed = 1
