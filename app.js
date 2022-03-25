@@ -769,7 +769,7 @@ function loadingMessage(link) {
     FinalText.height = app.view.height * 0.25
     FinalText.width = app.view.width * 0.5
     credit.x = 0
-    credit.text = "Developpeur: Abdelaziz Mansouri, Paul Granger, Valentin Dumousset \nDesigner: Alicia Maurice \nGame Designer: Alex Fraioli \nMusique : Turbo - STONEOCEAN / Eurobeat Remix , MANUEL - GAS GAS GAS (INSTRUMENTAL Version)\nBruitage : Dragon Ball FighterZ - Menu"
+    credit.text = "Developpeur: Abdelaziz Mansouri, Paul Granger, Valentin Dumousset \nDesigner: Alicia Maurice \nGame Designer: Alex Fraioli \nMusique: Turbo - STONEOCEAN / Eurobeat Remix , MANUEL - GAS GAS GAS (INSTRUMENTAL Version)\nBruitage: Dragon Ball FighterZ - Menu\nDessin: QuynzeL- Regional Beyblade Champion Loic"
     credit.y = app.view.height - credit.height
 
     epitaLogo.width = app.view.width * 0.25
