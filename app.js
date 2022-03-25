@@ -1,4 +1,4 @@
-var isLoose = false
+
 let textureArray = [];
 
 var texture;
@@ -81,6 +81,8 @@ var songInGame  = new Audio('./image/songInGame.mp3')
 var choix       = new Audio('./image/choix.mp4')
 var sound1      = new Audio('./image/epee5.mp3')
 var sound2      = new Audio('./image/epee6.mp3')
+var youWin      = new Audio('./image/youWin.mp4')
+var youLoose    = new Audio('./image/youLoose.mp4')
 var sprite      = PIXI.Sprite.from('./image/toupie_gentil.png')
 
 var mechant     = PIXI.Sprite.from("./image/toupie_mechante.png")
@@ -90,6 +92,7 @@ let gentil      = PIXI.Sprite.from('./image/loick-removed.png')
 var pointVie    = PIXI.Sprite.from("./image/point_de_vie.png")
 var pointVie2   = PIXI.Sprite.from("./image/point_de_vie.png")
 var titleText   = new PIXI.Text("BoulBleyde TM", styleTitle)
+var ultimateCount = new PIXI.Text("3", styleNumber)
 var souffleAir  = new Audio('./image/souffleair.mp3')
 
 var epitaLogo = PIXI.Sprite.from("./image/Epita.png")
@@ -164,6 +167,7 @@ var stupidCount = 0
 var elapsed      = 0.0
 var timer        = 0
 var timerHp      = 0
+var timerUlti    = 0
 var go           = false
 var isUltiActive = false
 var isContact    = null
@@ -173,7 +177,7 @@ var countContact = 50
 var timerFight = 0
 var isFirstTime = true
 var isWin = false
-var isLoos = false
+var isLoose = false
 var mechantSpeed = 10
 var boutonOn     = false
 var vitesseChoc  = 5
@@ -263,6 +267,11 @@ basicText.anchor.set(0.5)
 basicText.x      = app.view.width / 2
 basicText.y      = sprite.y - sprite.height
 basicText.zIndex = 4
+
+ultimateCount.anchor.set(0.5)
+ultimateCount.x      = app.view.width / 2
+ultimateCount.y      = sprite.y - sprite.height
+ultimateCount.zIndex = 4
 
 ultimateText.anchor.set(0.5)
 ultimateText.x = bouton.x - bouton.width * 2
@@ -413,7 +422,7 @@ setInterval(reduceSize,0.1)
 setInterval(arriveDuHero, 0.1)
 setInterval(arrivePanneau,500)
 setInterval(fight, 1)
-
+setInterval(counterUlti, 1)
 function arrivePanneau()
 {
     if (boutonOn) {
@@ -424,7 +433,7 @@ function arrivePanneau()
         if (ultimateText.text !== "") {
             ultimateText.text = ""
         } else {
-            ultimateText.text = "Ton ultime est pret !"
+            ultimateText.text = "Met les gaz !"
         }
     }
 }
@@ -555,6 +564,7 @@ function arriveDuHero()
 {
     if (isUltiActive) {
         if (isFirstTime) {
+            sound2.play()
             isFirstTime           = false
             gentil.zIndex         = 1
             animatedSprite.x      = 0
@@ -564,6 +574,7 @@ function arriveDuHero()
             animatedSprite.play()
             animatedSprite.zIndex         = -1
             animatedSprite.animationSpeed = 3
+            timerUlti = elapsed + 3000
             app.stage.addChild(bgUlti)
             app.stage.addChild(animatedSprite)
             app.stage.addChild(gentil)
@@ -571,10 +582,20 @@ function arriveDuHero()
             app.stage.addChild(button2)
             app.stage.addChild(button3)
             app.stage.addChild(button4)
-
+            app.stage.addChild(ultimateCount)
         }
         if (gentil.x > app.view.width*0.6)
             gentil.x -= 30
+        else if (elapsed >timerUlti && timerUlti !== 0) {
+            ultimateCount.text = ''
+            isUltiActive = false
+            desactivateUlti()
+            isLoose = true
+            mechantSpeed = 57
+            speed        = 1
+            timerFight = elapsed + 2000
+            activateFX(mechant)
+        }
     }
 
 
@@ -672,7 +693,7 @@ function onHit(e,number)
         timerFight = elapsed + 2000
         activateFX(sprite)
     }
-    else if (!bool) {
+    else if (!bool ) {
         isUltiActive = false
         desactivateUlti()
         isLoose = true
@@ -702,6 +723,7 @@ function desactivateFX(toupie)
 }
 function win()
 {
+    youWin.play()
     bgUlti.zIndex = 80
     link = './image/win.png'
     loadingMessage(link)
@@ -713,6 +735,7 @@ function win()
 
 function loose()
 {
+    youLoose.play()
     bgUlti.zIndex = 80
     link = './image/loose.png'
     loadingMessage(link)
@@ -816,7 +839,7 @@ function onClick()
     }
 }
 
-function pointerMove(event) {
+function pointerMove() {
     stupidPlus.x = Math.floor(Math.random() * app.view.width);
     stupidPlus.y = Math.floor(Math.random() * app.view.height);
 }
@@ -839,8 +862,10 @@ function shuffle(array) {
     return array
 }
 function fight(){
+
     if(isWin)
     {
+        ultimateCount.text = ''
         if (elapsed > timerFight && timerFight !== 0) {
             desactivateFX(mechant)
             win()
@@ -854,6 +879,7 @@ function fight(){
     }
     if (isLoose)
     {
+        ultimateCount.text = ''
         if (elapsed > timerFight && timerFight !== 0) {
             desactivateFX(sprite)
             loose()
@@ -864,5 +890,26 @@ function fight(){
             mechant.width += 1
             mechant.height += 1
         }
+    }
+}
+function counterUlti()
+{
+    /*
+    if (elapsed >= timerUlti - 5000 && elapsed < timerUlti - 4000 && timerUlti !== 0) {
+        ultimateCount.text = '4'
+    }
+    if (elapsed >= timerUlti - 4000 && elapsed < timerUlti - 3000 && timerUlti !== 0) {
+        ultimateCount.text = '3'
+    }
+     */
+    if (elapsed >= timerUlti - 3000 && elapsed < timerUlti - 2000 && timerUlti !== 0 && !isWin && !isLoose) {
+        ultimateCount.text = '2'
+    }
+    if (elapsed >= timerUlti - 2000 && elapsed < timerUlti - 1000 && timerUlti !== 0 && !isWin && !isLoose) {
+        ultimateCount.text = '1'
+    }
+    if (elapsed >= timerUlti - 1000 && elapsed < timerUlti && timerUlti !== 0 && !isWin && !isLoose)   {
+        ultimateCount.text = '0'
+
     }
 }
