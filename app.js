@@ -721,9 +721,15 @@ function desactivateFX(toupie)
     app.stage.removeChild(fx)
     app.stage.removeChild(toupie)
 }
+
+var ended = false
+
 function win()
 {
-    youWin.play()
+    if (!ended) {
+        youWin.play()
+    }
+    ended = true
     bgUlti.zIndex = 80
     link = './image/win.png'
     loadingMessage(link)
@@ -735,7 +741,9 @@ function win()
 
 function loose()
 {
-    youLoose.play()
+    if (!ended) {
+        youLoose.play()
+    }
     bgUlti.zIndex = 80
     link = './image/loose.png'
     loadingMessage(link)
@@ -892,16 +900,7 @@ function fight(){
         }
     }
 }
-function counterUlti()
-{
-    /*
-    if (elapsed >= timerUlti - 5000 && elapsed < timerUlti - 4000 && timerUlti !== 0) {
-        ultimateCount.text = '4'
-    }
-    if (elapsed >= timerUlti - 4000 && elapsed < timerUlti - 3000 && timerUlti !== 0) {
-        ultimateCount.text = '3'
-    }
-     */
+function counterUlti() {
     if (elapsed >= timerUlti - 3000 && elapsed < timerUlti - 2000 && timerUlti !== 0 && !isWin && !isLoose) {
         ultimateCount.text = '2'
     }
