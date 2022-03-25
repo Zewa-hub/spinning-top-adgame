@@ -769,9 +769,8 @@ function loadingMessage(link) {
     FinalText.height = app.view.height * 0.25
     FinalText.width = app.view.width * 0.5
     credit.x = 0
-    credit.text = "Developpeur: Abdelaziz Mansouri, Paul Granger, Valentin Dumousset \nDesigner: Alicia Maurice \nGame Designer: Alex Fraioli"
+    credit.text = "Developpeur: Abdelaziz Mansouri, Paul Granger, Valentin Dumousset \nDesigner: Alicia Maurice \nGame Designer: Alex Fraioli \nMusique : Turbo - STONEOCEAN / Eurobeat Remix , MANUEL - GAS GAS GAS (INSTRUMENTAL Version)\nBruitage : Dragon Ball FighterZ - Menu"
     credit.y = app.view.height - credit.height
-
 
     epitaLogo.width = app.view.width * 0.25
     epitaLogo.height = app.view.height * 0.25
