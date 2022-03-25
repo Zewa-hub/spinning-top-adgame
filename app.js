@@ -149,7 +149,7 @@ var countMechantTotal = app.view.width * 0.2
 var countMechant      = 0
 var FinalText
 var stupidCountText = new PIXI.Text('', styleNumber)
-var basicText       = new PIXI.Text('3', styleNumber)
+var basicText       = new PIXI.Text('5', styleNumber)
 var startText       = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
 var ultimateText    = new PIXI.Text('', styleNumber)
 var credit          = new PIXI.Text('', styleCredit)
@@ -453,7 +453,6 @@ function ticker()
                         progressBar.drawRect(0, app.view.height * 0.02,  countGentilVie, app.view.width * 0.02)
                         progressBar2.beginFill(0xfc0303)
                         progressBar2.drawRect(app.view.width - countMechant, app.view.height * 0.02, countMechant, app.view.width * 0.02)
-
                     }
                 }
             }
@@ -523,6 +522,12 @@ function deplacementGentil()
 }
 function counter()
 {
+    if (elapsed >= timer - 5000 && elapsed < timer - 4000 && timer !== 0) {
+        basicText.text = '4'
+    }
+    if (elapsed >= timer - 4000 && elapsed < timer - 3000 && timer !== 0) {
+        basicText.text = '3'
+    }
     if (elapsed >= timer - 3000 && elapsed < timer - 2000 && timer !== 0) {
         basicText.text = '2'
     }
@@ -777,7 +782,7 @@ function onClick()
     if (speed === 0) {
         app.stage.removeChild(startText)
         speed = 1
-        timer = elapsed + 3000
+        timer = elapsed + 5000
         stupidCount = speed
     }
     let addCount;
