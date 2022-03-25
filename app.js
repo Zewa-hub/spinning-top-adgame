@@ -26,6 +26,18 @@ for (let i=0; i < 64; i++)
 }
 
 var fx = new PIXI.AnimatedSprite(textureArray)
+textureArray = []
+
+for (let i=0; i < 16; i++)
+{
+    if (i >= 10 )
+        texture = PIXI.Texture.from("./image/explosionFX/tile0" + i + ".png");
+    else
+        texture = PIXI.Texture.from("./image/explosionFX/tile00" + i + ".png");
+    textureArray.push(texture)
+}
+
+var explofx = new PIXI.AnimatedSprite(textureArray)
 
 var order = [false,false,false,false]
 //var app = new PIXI.Application({height: height, width: width})
@@ -167,8 +179,10 @@ var isContact    = null
 var mechantTimer = 0
 var countContact = 50
 
+var timerFight = 0
 var isFirstTime = true
-
+var isWin = false
+var isLoos = false
 var mechantSpeed = 10
 var boutonOn     = false
 var vitesseChoc  = 5
@@ -258,8 +272,8 @@ bouton.anchor.x = 0.5
 bouton.anchor.y = 0.5
 bouton.x           = app.view.width * 0.8
 bouton.y           = app.view.height * 0.8
-bouton.width       = 50
-bouton.height      = 50
+bouton.width       = app.view.width * 0.1
+bouton.height      = app.view.width * 0.1
 bouton.interactive = true
 bouton.buttonMode  = true
 bouton.on('pointerdown', onHold)
@@ -402,10 +416,11 @@ button4.height      = app.view.width*0.1
 button4.interactive = true
 button4.buttonMode  = true
 
-setInterval(ticker,0.8)
+setInterval(ticker,1)
 setInterval(reduceSize,0.1)
 setInterval(arriveDuHero, 0.1)
 setInterval(arrivePanneau,500)
+setInterval(fight, 1)
 
 function arrivePanneau()
 {
@@ -423,7 +438,7 @@ function arrivePanneau()
 }
 function ticker()
 {
-    elapsed += 0.8;
+    elapsed += 10;
     if (elapsed > timer && timer !== 0 && speed > 0 ) {
         go = true
         deplacementGentil()
@@ -517,13 +532,13 @@ function deplacementGentil()
 }
 function counter()
 {
-    if (elapsed >= timer - 300 && elapsed < timer - 200 && timer !== 0) {
+    if (elapsed >= timer - 3000 && elapsed < timer - 2000 && timer !== 0) {
         basicText.text = '2'
     }
-    if (elapsed >= timer - 200 && elapsed < timer - 100 && timer !== 0) {
+    if (elapsed >= timer - 2000 && elapsed < timer - 1000 && timer !== 0) {
         basicText.text = '1'
     }
-    if (elapsed >= timer - 100 && elapsed < timer && timer !== 0) {
+    if (elapsed >= timer - 1000 && elapsed < timer && timer !== 0) {
         basicText.text = 'GO !!!'
         sprite.interactive = false
         sprite.buttonMode  = false
@@ -534,7 +549,7 @@ function counter()
 }
 function reduceSize()
 {
-    if (elapsed >= timer - 100 && elapsed < timer && timer !== 0 && sprite.width > app.view.width *0.15) {
+    if (elapsed >= timer - 1000 && elapsed < timer && timer !== 0 && sprite.width > app.view.width *0.15) {
         sprite.width  -= 2
         sprite.height -= 2
     }
@@ -586,7 +601,7 @@ function deplacementMechant()
     }
     else {
         if (timerHp === 0) {
-            timerHp = elapsed + 200
+            timerHp = elapsed + 2000
         }
         else if (elapsed >= timerHp && timerHp !== 0 && !boutonOn && isFirstTime) {
             descCoef = 0
@@ -611,14 +626,20 @@ function onHold()
     app.stage.removeChild(ultimateText)
     boutonOn = false
     isUltiActive = true
-    mechantTimer = elapsed + 100
+    mechantTimer = elapsed + 1000
     /*
     if (elapsed >= mechantTimer) {
         mechant.destroy()
     }
      */
 }
-
+function sleep(milliseconds) {
+    const date = Date.now();
+    let currentDate = null;
+    do {
+        currentDate = Date.now();
+    } while (currentDate - date < milliseconds);
+}
 function desactivateUlti() {
     app.stage.removeChild(bgUlti)
     app.stage.removeChild(animatedSprite)
@@ -647,33 +668,55 @@ function onHit(e,number)
     if (bool && number === order.length - 1) {
         isUltiActive = false
         desactivateUlti()
-        win()
+        isWin = true
+        mechantSpeed = 1
+        speed        = 57
+        timerFight = elapsed + 2000
+        activateFX(sprite,mechant)
     }
     else if (!bool) {
         isUltiActive = false
         desactivateUlti()
-        loose()
+        isLoose = true
+        mechantSpeed = 57
+        speed        = 1
+        timerFight = elapsed + 2000
+        activateFX(mechant, sprite)
     }
+}
+function activateFX(toupie1,toupie2)
+{
+    fx.anchor.set(0.5)
+    fx.x      = toupie1.x
+    fx.y      = toupie1.y
+    fx.width  = toupie1.width * 2
+    fx.height = toupie1.height * 2
+    fx.play()
+    fx.zIndex         = -1
+    fx.animationSpeed = 1
+    app.stage.addChild(fx)
+    explofx.anchor.set(0.5)
+    explofx.x      = toupie2.x
+    explofx.y      = toupie2.y
+    explofx.width  = toupie2.width / 2
+    explofx.height = toupie2.height / 2
+    explofx.play()
+    explofx.zIndex         = -1
+    explofx.animationSpeed = 0.1
+    app.stage.addChild(explofx)
+}
+function desactivateFX(toupie)
+{
+    fx.destroy()
+    explofx.destroy()
+    toupie.destroy()
 }
 function win()
 {
     bgUlti.zIndex = 80
     loadingMessage("You win !")
     updateVie(1)
-    fx.anchor.set(0.5)
-    fx.x      = sprite.x
-    fx.y      = sprite.y
-    fx.width  = sprite.width * 2
-    fx.height = sprite.height * 2
-    fx.play()
-    fx.zIndex         = -1
-    fx.animationSpeed = 1
-    app.stage.addChild(fx)
     afficheMessage()
-
-
-    mechantSpeed = 1
-    speed        = 57
 
 }
 function loose()
@@ -682,8 +725,7 @@ function loose()
     loadingMessage("You loose !")
     updateVie(2)
     afficheMessage()
-    mechantSpeed = 57
-    speed        = 1
+
 }
 function afficheMessage()
 {
@@ -742,7 +784,7 @@ function onClick()
     if (speed === 0) {
         app.stage.removeChild(startText)
         speed = 1
-        timer = elapsed + 300
+        timer = elapsed + 3000
         stupidCount = speed
     }
     if (elapsed <= timer) {
@@ -784,4 +826,32 @@ function shuffle(array) {
             array[randomIndex], array[currentIndex]]
     }
     return array
+}
+function fight(){
+    if(isWin)
+    {
+        if (elapsed > timerFight && timerFight !== 0) {
+            desactivateFX(mechant)
+            win()
+        }
+        else if (sprite.width < app.view.width *0.2) {
+            fx.width += 2
+            fx.height += 2
+            sprite.width += 1
+            sprite.height += 1
+        }
+    }
+    if (isLoose)
+    {
+        if (elapsed > timerFight && timerFight !== 0) {
+            desactivateFX(sprite)
+            loose()
+        }
+        else if (mechant.width < app.view.width *0.2) {
+            fx.width += 2
+            fx.height += 2
+            mechant.width += 1
+            mechant.height += 1
+        }
+    }
 }
