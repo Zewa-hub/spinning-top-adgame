@@ -1,7 +1,4 @@
-var height = 360
-var width  = 640
-
-
+var isLoose = false
 let textureArray = [];
 
 var texture;
@@ -26,21 +23,8 @@ for (let i=0; i < 64; i++)
 }
 
 var fx = new PIXI.AnimatedSprite(textureArray)
-textureArray = []
-
-for (let i=0; i < 16; i++)
-{
-    if (i >= 10 )
-        texture = PIXI.Texture.from("./image/explosionFX/tile0" + i + ".png");
-    else
-        texture = PIXI.Texture.from("./image/explosionFX/tile00" + i + ".png");
-    textureArray.push(texture)
-}
-
-var explofx = new PIXI.AnimatedSprite(textureArray)
 
 var order = [false,false,false,false]
-//var app = new PIXI.Application({height: height, width: width})
 var app = new PIXI.Application({resizeTo : window})
 document.body.appendChild(app.view)
 
@@ -102,14 +86,16 @@ var pointVie2   = PIXI.Sprite.from("./image/point_de_vie.png")
 var titleText   = new PIXI.Text("BoulBleyde TM", styleTitle)
 var souffleAir  = new Audio('./image/souffleair.mp3')
 
-var epitaLogo    = PIXI.Sprite.from("./image/Epita.png")
-var eArtSup      = PIXI.Sprite.from("./image/eartsup.png")
-let bluebg      = PIXI.Sprite.from('./image/blue.png')
+var epitaLogo = PIXI.Sprite.from("./image/Epita.png")
+var eArtSup   = PIXI.Sprite.from("./image/eartsup.png")
+let bluebg    = PIXI.Sprite.from('./image/blue.png')
+
 
 function choose(int) {
     if (int === 1) {
         sprite  = PIXI.Sprite.from('./image/toupie_gentil.png')
         mechant = PIXI.Sprite.from('./image/toupie_mechante.png')
+        //sprite3 =
     } else {
         sprite  = PIXI.Sprite.from('./image/toupie_mechante.png')
         mechant = PIXI.Sprite.from('./image/toupie_gentil.png')
@@ -163,7 +149,8 @@ var ultimateText    = new PIXI.Text('', styleNumber)
 var FinalText       = new PIXI.Text('', styleNumber)
 var credit          = new PIXI.Text('', styleNumber)
 
-var choixText       = new PIXI.Text('Choisis TA toupie', styleChoix)
+var choixText  = new PIXI.Text('Choisis ta toupie', styleChoix)
+var stupidPlus = new PIXI.Text('', styleNumber)
 
 var speed       = 0
 var countHp     = 0
@@ -203,16 +190,16 @@ progressBar.drawRect(0, app.view.height * 0.02, countGentilVieTotal, app.view.wi
 progressBar.zIndex = 20
 app.stage.addChild(progressBar)
 
-pointVie.width = countGentilVieTotal
-pointVie.height = app.view.width * 0.02
+pointVie.width = countGentilVieTotal + 10
+pointVie.height = app.view.width * 0.025
 pointVie.x = 0
 pointVie.y = app.view.height * 0.02
 
 pointVie2.angle = 180
-pointVie2.width = countMechantTotal
-pointVie2.height = app.view.width * 0.02
+pointVie2.width = countMechantTotal + 10
+pointVie2.height = app.view.width * 0.025
 pointVie2.x = app.view.width
-pointVie2.y = (app.view.height * 0.02) * 3
+pointVie2.y = (app.view.height * 0.02) * 3 + 5
 
 app.stage.addChild(pointVie)
 
@@ -501,7 +488,6 @@ function soundEffect()
 function isTouched()
 {
     let margin = sprite.width * 0.50
-    //return (!rectIntersect(sprite, mechant) && !isContact)
     return (mechant.x > sprite.x + ((sprite.width + margin) / 2)
             || (mechant.x + mechant.width / 2) < sprite.x
             || mechant.y > sprite.y + ((sprite.height + margin) / 2)
@@ -542,6 +528,7 @@ function counter()
         basicText.text = 'GO !!!'
         sprite.interactive = false
         sprite.buttonMode  = false
+        app.stage.addChild(stupidPlus)
     }
     if (elapsed >= mechantTimer && mechantTimer !== 0 && mechant.transform != null) {
         //mechant.destroy()
@@ -695,6 +682,7 @@ function activateFX(toupie1,toupie2)
     fx.zIndex         = -1
     fx.animationSpeed = 1
     app.stage.addChild(fx)
+    /*
     explofx.anchor.set(0.5)
     explofx.x      = toupie2.x
     explofx.y      = toupie2.y
@@ -704,11 +692,12 @@ function activateFX(toupie1,toupie2)
     explofx.zIndex         = -1
     explofx.animationSpeed = 0.1
     app.stage.addChild(explofx)
+    */
 }
 function desactivateFX(toupie)
 {
     fx.destroy()
-    explofx.destroy()
+    //explofx.destroy()
     toupie.destroy()
 }
 function win()
@@ -780,6 +769,7 @@ function updateVie(number)
 }
 function onClick()
 {
+    var stupidUpdate = stupidCount;
     souffleAir.play()
     if (speed === 0) {
         app.stage.removeChild(startText)
@@ -787,30 +777,45 @@ function onClick()
         timer = elapsed + 3000
         stupidCount = speed
     }
+    let addCount;
     if (elapsed <= timer) {
         if (speed < 40) {
-            speed=speed * 1.2
+            speed = speed * 1.2
         }
         countHp += 1
         if (countHp <= 3) {
             stupidCount = Math.round(countHp * 141.21)
-            stupidSize  = 20
+            stupidSize = 20
         } else if (countHp <= 8) {
             stupidCount = Math.round(countHp * 8894.74)
-            stupidSize  = 24
+            stupidSize = 24
         } else if (countHp <= 15) {
             stupidCount = Math.round(countHp * 14577.68)
-            stupidSize  = 30
+            stupidSize = 30
         } else if (countHp >= 15) {
             stupidCount = Math.round(countHp * 81544.56)
             stupidSize = 50
         }
+        stupidPlus.text = ''
+        addCount        = stupidCount - stupidUpdate
+        stupidPlus.text = '+' + addCount + 'KM/H'
+        app.stage.addChild(stupidPlus)
+        sprite.on('pointerdown', pointerMove);
+
         stupidCountText.text = ""
         stupidCountText.text = stupidCount + 'KM/H'
         app.stage.addChild(stupidCountText)
         descCoef = speed * 0.004
     }
 }
+
+function pointerMove(event) {
+    console.log(event.data.global.x)
+    stupidPlus.x = event.data.global.x;
+    stupidPlus.y = event.data.global.y;
+}
+
+
 function shuffle(array) {
     let currentIndex = array.length,  randomIndex
 
