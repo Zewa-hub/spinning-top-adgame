@@ -16,20 +16,6 @@ canvas {
     overflow:auto;
 }
 
-button {
-    border: 1px solid black;
-    background-color: red;
-    border-radius: 15px;
-    float:left;
-    font-size: 2em;
-}
-
-a {
-    outline: none;
-    text-decoration: none;
-    color: white;
-}
-
 html {
     background-color: black;
     background-size: cover;

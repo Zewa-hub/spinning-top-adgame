@@ -29,18 +29,24 @@ var app = new PIXI.Application({resizeTo : window})
 document.body.appendChild(app.view)
 
 var styleNumber = new PIXI.TextStyle({
-    "fill": [
-        "red",
-        "#ff8000"
-    ],
+    "fill": "white",
     "fillGradientStops": [
         1
     ],
     "fontFamily": "Impact",
-    "fontSize":48,
-    "strokeThickness": 0.5
+    "fontSize": 48,
+    "strokeThickness": 5
 })
 
+var styleCredit = new PIXI.TextStyle({
+    "fill": "white",
+    "fillGradientStops": [
+        1
+    ],
+    "fontFamily": "Impact",
+    "fontSize": 24,
+    "strokeThickness": 5
+})
 var styleChoix = new PIXI.TextStyle({
     "fill": [
         "red",
@@ -70,7 +76,7 @@ var styleTitle = new PIXI.TextStyle({
 var jaune = PIXI.Sprite.from('./image/toupie_gentil.png')
 var bleu  = PIXI.Sprite.from('./image/toupie_mechante.png')
 
-var songChoix   = new Audio('./image/songchoix.mp4')
+var songChoix   = new Audio('./image/songchoix.mp3')
 var songInGame  = new Audio('./image/songInGame.mp3')
 var choix       = new Audio('./image/choix.mp4')
 var sound1      = new Audio('./image/epee5.mp3')
@@ -89,7 +95,7 @@ var souffleAir  = new Audio('./image/souffleair.mp3')
 var epitaLogo = PIXI.Sprite.from("./image/Epita.png")
 var eArtSup   = PIXI.Sprite.from("./image/eartsup.png")
 let bluebg    = PIXI.Sprite.from('./image/blue.png')
-
+var play      = PIXI.Sprite.from('./image/play.png')
 
 function choose(int) {
     if (int === 1) {
@@ -141,15 +147,13 @@ var countGentilVie      = 0
 
 var countMechantTotal = app.view.width * 0.2
 var countMechant      = 0
-
+var FinalText
 var stupidCountText = new PIXI.Text('', styleNumber)
 var basicText       = new PIXI.Text('3', styleNumber)
 var startText       = new PIXI.Text('Appuyez vite sur la toupie !!!', styleNumber)
 var ultimateText    = new PIXI.Text('', styleNumber)
-var FinalText       = new PIXI.Text('', styleNumber)
-var credit          = new PIXI.Text('', styleNumber)
+var credit          = new PIXI.Text('', styleCredit)
 
-var choixText  = new PIXI.Text('Choisis ta toupie', styleChoix)
 var stupidPlus = new PIXI.Text('', styleNumber)
 
 var speed       = 0
@@ -181,7 +185,7 @@ app.stage.addChild(ultimateText)
 app.stage.addChild(bluebg)
 app.stage.addChild(jaune)
 app.stage.addChild(bleu)
-app.stage.addChild(choixText)
+app.stage.addChild(play)
 app.stage.addChild(titleText)
 
 let progressBar = new PIXI.Graphics()
@@ -193,7 +197,7 @@ app.stage.addChild(progressBar)
 pointVie.width = countGentilVieTotal + 10
 pointVie.height = app.view.width * 0.025
 pointVie.x = 0
-pointVie.y = app.view.height * 0.02
+pointVie.y = app.view.height * 0.02 - 2.5
 
 pointVie2.angle = 180
 pointVie2.width = countMechantTotal + 10
@@ -214,18 +218,9 @@ stupidCountText.anchor.set(0.5)
 stupidCountText.x = app.view.width / 2
 stupidCountText.y = app.view.height * 0.05
 
-basicText.anchor.set(0.5)
-basicText.x      = app.view.width / 2
-basicText.y      = app.view.height * 0.45
-basicText.zIndex = 4
-
 startText.anchor.set(0.5)
 startText.x = app.view.width / 2
 startText.y = app.view.height * 0.4
-
-ultimateText.anchor.set(0.5)
-ultimateText.x = app.view.width * 0.65
-ultimateText.y = app.view.height * 0.8
 
 background.zIndex = 0
 background.height = app.view.height
@@ -254,7 +249,6 @@ mechant.y        = -mechant.width / 2
 mechant.anchor.x = 0.5
 mechant.anchor.y = 0.5
 
-
 bouton.anchor.x = 0.5
 bouton.anchor.y = 0.5
 bouton.x           = app.view.width * 0.8
@@ -265,19 +259,30 @@ bouton.interactive = true
 bouton.buttonMode  = true
 bouton.on('pointerdown', onHold)
 
+basicText.anchor.set(0.5)
+basicText.x      = app.view.width / 2
+basicText.y      = sprite.y - sprite.height
+basicText.zIndex = 4
+
+ultimateText.anchor.set(0.5)
+ultimateText.x = bouton.x - bouton.width * 2
+ultimateText.y = bouton.y
+
 gentil.x      = app.view.width
 gentil.y      = app.view.height * 0.2
 gentil.height = app.view.height * 0.6
 gentil.width  = app.view.width * 0.4
 
-choixText.x = app.view.width / 2
-choixText.y = app.view.height / 2
-choixText.anchor.x = 0.5
-choixText.anchor.y = 0.5
-choixText.zIndex = 41
-choixText.interactive = true
-choixText.buttonMode  = true
-choixText.on('pointerdown', () => {
+play.x = app.view.width / 2
+play.y = app.view.height / 2
+play.anchor.x    = 0.5
+play.anchor.y    = 0.5
+play.zIndex      = 41
+play.interactive = true
+play.buttonMode  = true
+play.height      = app.view.height * 0.25
+play.width       = app.view.width * 0.4
+play.on('pointerdown', () => {
     choix.play()
     playSong()
 });
@@ -318,7 +323,7 @@ function playSong() {
         choose(2)
     });
     songChoix.play()
-    choixText.text = ''
+    app.stage.removeChild(play)
 }
 
 jaune.mouseover = function() {
@@ -403,7 +408,7 @@ button4.height      = app.view.width*0.1
 button4.interactive = true
 button4.buttonMode  = true
 
-setInterval(ticker,1)
+setInterval(ticker,10)
 setInterval(reduceSize,0.1)
 setInterval(arriveDuHero, 0.1)
 setInterval(arrivePanneau,500)
@@ -528,7 +533,7 @@ function counter()
         basicText.text = 'GO !!!'
         sprite.interactive = false
         sprite.buttonMode  = false
-        app.stage.addChild(stupidPlus)
+        stupidPlus.text    = ''
     }
     if (elapsed >= mechantTimer && mechantTimer !== 0 && mechant.transform != null) {
         //mechant.destroy()
@@ -608,6 +613,7 @@ function pause() {
 
 function onHold()
 {
+    sound2.play()
     app.stage.removeChild(bgUlti)
     app.stage.removeChild(bouton)
     app.stage.removeChild(ultimateText)
@@ -659,7 +665,7 @@ function onHit(e,number)
         mechantSpeed = 1
         speed        = 57
         timerFight = elapsed + 2000
-        activateFX(sprite,mechant)
+        activateFX(sprite)
     }
     else if (!bool) {
         isUltiActive = false
@@ -668,10 +674,10 @@ function onHit(e,number)
         mechantSpeed = 57
         speed        = 1
         timerFight = elapsed + 2000
-        activateFX(mechant, sprite)
+        activateFX(mechant)
     }
 }
-function activateFX(toupie1,toupie2)
+function activateFX(toupie1)
 {
     fx.anchor.set(0.5)
     fx.x      = toupie1.x
@@ -682,40 +688,35 @@ function activateFX(toupie1,toupie2)
     fx.zIndex         = -1
     fx.animationSpeed = 1
     app.stage.addChild(fx)
-    /*
-    explofx.anchor.set(0.5)
-    explofx.x      = toupie2.x
-    explofx.y      = toupie2.y
-    explofx.width  = toupie2.width / 2
-    explofx.height = toupie2.height / 2
-    explofx.play()
-    explofx.zIndex         = -1
-    explofx.animationSpeed = 0.1
-    app.stage.addChild(explofx)
-    */
 }
 function desactivateFX(toupie)
 {
-    fx.destroy()
-    //explofx.destroy()
-    toupie.destroy()
+    //fx.destroy()
+    app.stage.removeChild(fx)
+    app.stage.removeChild(toupie)
 }
 function win()
 {
     bgUlti.zIndex = 80
-    loadingMessage("You win !")
+    link = './image/win.png'
+    loadingMessage(link)
     updateVie(1)
     afficheMessage()
-
+    pause()
+    songInGame.pause()
 }
+
 function loose()
 {
     bgUlti.zIndex = 80
-    loadingMessage("You loose !")
+    link = './image/loose.png'
+    loadingMessage(link)
     updateVie(2)
     afficheMessage()
-
+    pause()
+    songInGame.pause()
 }
+
 function afficheMessage()
 {
     app.stage.addChild(bgUlti)
@@ -724,30 +725,32 @@ function afficheMessage()
     app.stage.addChild(epitaLogo)
     app.stage.addChild(eArtSup)
 }
-function loadingMessage(text) {
+function loadingMessage(link) {
+    FinalText = PIXI.Sprite.from(link)
     FinalText.anchor.set(0.5)
-    //credit.anchor.set(0.5)
     FinalText.x = app.view.width * 0.5
     FinalText.y = app.view.height * 0.5
-    FinalText.text = text
+    FinalText.height = app.view.height * 0.25
+    FinalText.width = app.view.width * 0.5
     credit.x = 0
-    credit.y = 0
-    credit.text = "Developpeur: Abdelaziz Mansouri, Paul Granger, Valentin Dumousset \nDesigner: Alicia Maurice \nGame Designer: Alexandre Fraoili"
+    credit.text = "Developpeur: Abdelaziz Mansouri, Paul Granger, Valentin Dumousset \nDesigner: Alicia Maurice \nGame Designer: Alex Fraioli"
+    credit.y = app.view.height - credit.height
 
-    epitaLogo.width = app.view.width * 0.2
-    epitaLogo.height = app.view.height * 0.2
+
+    epitaLogo.width = app.view.width * 0.25
+    epitaLogo.height = app.view.height * 0.25
     epitaLogo.x = 0
-    epitaLogo.y = app.view.height - epitaLogo.height
+    epitaLogo.y = 0
 
-    eArtSup.width = app.view.width * 0.2
-    eArtSup.height = app.view.height * 0.2
+    eArtSup.width = app.view.width * 0.25
+    eArtSup.height = app.view.height * 0.25
     eArtSup.x = app.view.width - eArtSup.width
-    eArtSup.y = app.view.height - eArtSup.height
+    eArtSup.y = 0
 
 }
 function updateVie(number)
 {
-    if (number == 1)
+    if (number === 1)
     {
         app.stage.removeChild(progressBar2)
         app.stage.removeChild(pointVie2)
@@ -765,8 +768,8 @@ function updateVie(number)
         app.stage.addChild(progressBar)
         app.stage.addChild(pointVie)
     }
-
 }
+
 function onClick()
 {
     var stupidUpdate = stupidCount;
@@ -796,7 +799,6 @@ function onClick()
             stupidCount = Math.round(countHp * 81544.56)
             stupidSize = 50
         }
-        stupidPlus.text = ''
         addCount        = stupidCount - stupidUpdate
         stupidPlus.text = '+' + addCount + 'KM/H'
         app.stage.addChild(stupidPlus)
@@ -810,9 +812,8 @@ function onClick()
 }
 
 function pointerMove(event) {
-    console.log(event.data.global.x)
-    stupidPlus.x = event.data.global.x;
-    stupidPlus.y = event.data.global.y;
+    stupidPlus.x = Math.floor(Math.random() * app.view.width);
+    stupidPlus.y = Math.floor(Math.random() * app.view.height);
 }
 
 
